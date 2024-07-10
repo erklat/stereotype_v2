@@ -1,6 +1,10 @@
+import React, { useRef } from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import StoreProvider from "@/state-management/StoreProvider";
+import { makeStore, AppStore } from "@/state-management/store";
+import NotificationManager from "@/utils/NotificationManager/NotificationManager";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,8 +19,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
+    <React.StrictMode>
+      <StoreProvider>
+        <html lang="en">
+          <body className={inter.className}>
+            {children}
+
+            <NotificationManager />
+          </body>
+        </html>
+      </StoreProvider>
+    </React.StrictMode>
   );
 }

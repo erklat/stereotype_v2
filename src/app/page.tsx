@@ -1,8 +1,83 @@
+"use client";
+
+import { useEffect, useCallback } from "react";
 import Image from "next/image";
+import StoreProvider from "@/state-management/StoreProvider";
+import { useAppDispatch } from "@/state-management/hooks";
+import { actions as productActions } from "@/utils/ProductsManager/ProductsManager.reducer";
+import Filters from "@/components/Filters/Filters.component";
+import Products from "@/components/Products/Products.component";
 
 export default function Home() {
+  const dispatch = useAppDispatch();
+
+  const fetchProductsAPI = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      dispatch({
+        type: productActions.START_FETCHING_PRODUCTS,
+        promise: { resolve, reject },
+      });
+    });
+  }, [dispatch]);
+
+  const fetchCategoriesAPI = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      dispatch({
+        type: productActions.START_FETCHING_CATEGORIES,
+        promise: { resolve, reject },
+      });
+    });
+  }, [dispatch]);
+
+  const onSortChangeAPI = (val: string) => {
+    const [sortBy, order] = val.split("-");
+
+    return new Promise((resolve, reject) => {
+      dispatch({
+        type: productActions.START_FETCHING_PRODUCTS,
+        promise: { resolve, reject },
+        params: {
+          sortBy,
+          order,
+        },
+      });
+    });
+  };
+
+  const onCategoryChangeAPI = (slug: string) => {
+    return new Promise((resolve, reject) => {
+      dispatch({
+        type: productActions.START_FETCHING_CATEGORY_PRODUCTS,
+        promise: { resolve, reject },
+        params: {
+          category: slug,
+        },
+      });
+    });
+  };
+
+  const onSortChange = async (val: string) => {
+    await onSortChangeAPI(val);
+  };
+
+  const onCategoryChange = async (slug: string) => {
+    await onCategoryChangeAPI(slug);
+  };
+
+  useEffect(() => {
+    fetchProductsAPI();
+    fetchCategoriesAPI();
+  }, [fetchProductsAPI, fetchCategoriesAPI]);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <Filters
+        onSortChange={onSortChange}
+        onCategoryChange={onCategoryChange}
+      />
+
+      <Products />
+
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
         <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
           Get started by editing&nbsp;

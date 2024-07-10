@@ -1,0 +1,35 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Cart {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  total           Decimal
+  discountedTotal Decimal
+  totalProducts   Int
+  totalQuantity   Int
+  hashKey         String
+  cartItems       CartItem[]
+}
+
+model CartItem {
+  id                Int      @id @default(autoincrement())
+  cartId            Int
+  productId         Int
+  title             String
+  price             Decimal
+  quantity          Int
+  total             Decimal
+  discountPercentage Decimal?
+  discountedTotal   Decimal?
+  thumbnail         String
+  cart              Cart     @relation(fields: [cartId], references: [id])
+}
