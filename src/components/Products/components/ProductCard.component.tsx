@@ -28,7 +28,8 @@ const ProductCard: React.FC<ProductCardProps> = (product) => {
         promise: { resolve, reject },
         payload: {
           userId: 1,
-          product,
+          // TODO: leave as an array in case of bulk add
+          products: [{ ...product, quantity: 1 }],
         },
       });
     });

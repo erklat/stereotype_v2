@@ -3,7 +3,11 @@ export const actions = {
   ADD_PRODUCT_SUCCESSFUL: "ADD_PRODUCT_SUCCESSFUL",
   ADD_PRODUCT_FAILED: "ADD_PRODUCT_FAILED",
 
-  STORE_PRODUCT_DATA: "STORE_PRODUCT_DATA",
+  START_FETCHING_CART: "START_FETCHING_CART",
+  FETCHING_CART_SUCCESSFUL: "FETCHING_CART_SUCCESSFUL",
+  FETCHING_CART_FAILED: "FETCHING_CART_FAILED",
+
+  STORE_CART_DATA: "STORE_CART_DATA",
 };
 
 const initialState = {
@@ -30,9 +34,25 @@ const cartActions = (
       };
     }
 
-    case actions.STORE_PRODUCT_DATA: {
+    case actions.START_FETCHING_CART: {
       return {
         ...state,
+        cartLoading: true,
+      };
+    }
+    case actions.FETCHING_CART_SUCCESSFUL:
+    case actions.FETCHING_CART_FAILED: {
+      return {
+        ...state,
+        cartLoading: false,
+      };
+    }
+
+    case actions.STORE_CART_DATA: {
+      return {
+        ...state,
+        data: { ...response },
+        cartExists: !!Object.keys(response).length,
       };
     }
     default:
