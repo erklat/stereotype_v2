@@ -4,6 +4,8 @@ import { actions as cartActions } from "@/utils/CartManager/CartManager.reducer"
 
 import Button from "@/components/Button/Button.component";
 
+import QuantityControl from "@/components/Cart/QuantityControl/QuantityControl.component";
+
 interface ProductCardProps {
   id: string;
   title: string;
@@ -13,8 +15,10 @@ interface ProductCardProps {
   discount?: number;
 }
 
-const ProductCard: React.FC<ProductCardProps> = (product) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const dispatch = useAppDispatch();
+
+  console.log(">>>>", product);
 
   const { id, title, thumbnail, brand, price, discount } = product;
   const discountedPrice = discount
@@ -73,7 +77,8 @@ const ProductCard: React.FC<ProductCardProps> = (product) => {
         )}
       </div>
       <div className="mt-2">
-        <Button label="Add to Cart" onClick={() => addToCart(product)} />
+        <QuantityControl product={product} />
+        {/* <Button label="Add to Cart" onClick={() => addToCart(product)} /> */}
       </div>
     </div>
   );

@@ -7,6 +7,14 @@ export const actions = {
   FETCHING_CART_SUCCESSFUL: "FETCHING_CART_SUCCESSFUL",
   FETCHING_CART_FAILED: "FETCHING_CART_FAILED",
 
+  START_UPDATE_CART: "START_UPDATE_CART",
+  UPDATE_CART_SUCCESSFUL: "UPDATE_CART_SUCCESSFUL",
+  UPDATE_CART_FAILED: "UPDATE_CART_FAILED",
+
+  START_UPDATE_PRODUCT_QUANTITY: "START_UPDATE_PRODUCT_QUANTTITY",
+  UPDATE_PRODUCT_QUANTITY_SUCCESSFUL: "UPDATE_PRODUCT_QUANTITY_SUCCESSFUL",
+  UPDATE_PRODUCT_QUANTITY_FAILED: "UPDATE_PRODUCT_QUANTITY_FAILED",
+
   STORE_CART_DATA: "STORE_CART_DATA",
 };
 
@@ -42,6 +50,35 @@ const cartActions = (
     }
     case actions.FETCHING_CART_SUCCESSFUL:
     case actions.FETCHING_CART_FAILED: {
+      return {
+        ...state,
+        cartLoading: false,
+      };
+    }
+
+    case actions.START_UPDATE_CART: {
+      return {
+        ...state,
+        cartLoading: true,
+      };
+    }
+    case actions.UPDATE_CART_SUCCESSFUL:
+    case actions.UPDATE_CART_FAILED: {
+      return {
+        ...state,
+        cartLoading: false,
+      };
+    }
+
+    case actions.START_UPDATE_PRODUCT_QUANTITY: {
+      return {
+        ...state,
+        cartLoading: true,
+      };
+    }
+
+    case actions.UPDATE_PRODUCT_QUANTITY_SUCCESSFUL:
+    case actions.UPDATE_PRODUCT_QUANTITY_FAILED: {
       return {
         ...state,
         cartLoading: false,

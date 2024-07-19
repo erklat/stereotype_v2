@@ -34,7 +34,6 @@ export function* addProduct({ promise, payload }) {
     const state = yield select();
     const { products, userId } = payload;
     const cartData = getCartData(state);
-    console.log("cartData", cartData);
     const response = yield localRestClient.post(
       !cartData ? `/cart` : `/cart/${cartData.id}`,
       {
@@ -100,9 +99,66 @@ export function* fetchCart({ promise }) {
   }
 }
 
+export function* updateCart({ promise, payload }) {
+  try {
+    const state = yield select();
+    const { products, userId } = payload;
+    const cartData = getCartData(state);
+    const response = yield localRestClient.post(`/cart/${cartData.id}`);
+
+    yield put({
+      type: cartActions.UPDATE_CART_SUCCESSFUL,
+    });
+
+    yield put({
+      type: cartActions.STORE_CART_DATA,
+      response,
+    });
+
+    yield call(promise.resolve, response.data);
+  } catch (error) {
+    yield put({
+      type: cartActions.UPDATE_CART_FAILED,
+    });
+
+    yield call(promise.reject, error);
+  }
+}
+
+export function* updateProductQuantity({ promise, payload }) {
+  try {
+    const { cartId, productId, quantity } = payload;
+    const response = yield localRestClient.patch(
+      `/cart/${cartId}/items/${productId}`,
+      {
+        quantity,
+      }
+    );
+
+    yield put({
+      type: cartActions.UPDATE_PRODUCT_QUANTITY_SUCCESSFUL,
+    });
+
+    yield put({
+      type: cartActions.STORE_CART_DATA,
+      response: response.data.data,
+    });
+
+    yield call(promise.resolve, response.data);
+  } catch (error) {
+    yield put({
+      type: cartActions.UPDATE_PRODUCT_QUANTITY_FAILED,
+    });
+
+    yield call(promise.reject, error);
+  }
+}
+
 const actions = [
   takeLatest(cartActions.START_ADD_PRODUCT, addProduct),
   takeLatest(cartActions.START_FETCHING_CART, fetchCart),
+  takeLatest(cartActions.START_UPDATE_CART, updateCart),
+  takeLatest(cartActions.START_UPDATE_PRODUCT_QUANTITY, updateProductQuantity),
 ];
 
 /**
