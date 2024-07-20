@@ -8,9 +8,11 @@ import { actions as productActions } from "@/utils/ProductsManager/ProductsManag
 import Filters from "@/components/Filters/Filters.component";
 import Products from "@/components/Products/Products.component";
 import { actions as cartActions } from "@/utils/CartManager/CartManager.reducer";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   const dispatch = useAppDispatch();
+  const session = useSession();
 
   const fetchProductsAPI = useCallback(() => {
     return new Promise((resolve, reject) => {
@@ -79,6 +81,10 @@ export default function Home() {
     fetchCategoriesAPI();
     fetchCartAPI();
   }, [fetchProductsAPI, fetchCategoriesAPI, fetchCartAPI]);
+
+  useEffect(() => {
+    console.log(session);
+  }, [session]);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
