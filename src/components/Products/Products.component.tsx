@@ -17,6 +17,8 @@ const Products = () => {
 
   console.log(queryParams);
 
+  console.log(">ZZZZZZ, ", products);
+
   const onSearchChange = (q) => {
     dispatch({
       type: productActions.STORE_PRODUCT_FILTERS,
@@ -33,7 +35,7 @@ const Products = () => {
         <Row>
           {products.map((product) => (
             <Column key={product.id} span={3}>
-              <ProductCard {...product} />
+              <ProductCard product={product} />
             </Column>
           ))}
         </Row>
