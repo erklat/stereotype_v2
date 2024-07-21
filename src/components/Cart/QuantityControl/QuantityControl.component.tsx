@@ -14,8 +14,6 @@ const QuantityControl = ({ product }) => {
   );
   const { productId, quantity: currentQuantity } = { ...productInCart };
 
-  console.log(productInCart);
-
   const addToCartAPI = (product) => {
     return new Promise((resolve, reject) => {
       dispatch({
@@ -69,12 +67,9 @@ const QuantityControl = ({ product }) => {
   const onQuantityChange = () => {};
 
   const updateProductQuantity = (quantity) => {
-    console.log(quantity);
     updateProductQuantityAPI(quantity)
       .then(() => {})
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch(() => {});
   };
 
   return (

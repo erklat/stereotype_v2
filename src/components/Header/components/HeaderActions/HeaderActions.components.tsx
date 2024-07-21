@@ -18,7 +18,7 @@ const HeaderActions = () => {
 
   return (
     <div className="flex gap-4">
-      <Dropdown label={<Svg icon="user" />}>
+      <Dropdown trigger={<Svg icon="user" />}>
         {!!userData ? (
           <div className="text-slate-600">
             <div className="flex flex-col gap-4">
@@ -34,7 +34,7 @@ const HeaderActions = () => {
         )}
       </Dropdown>
       {!!cartItems?.length && (
-        <Dropdown label={<Svg icon="cart" />}>
+        <Dropdown trigger={<Svg icon="cart" />}>
           <div>
             {cartItems.map((item) => (
               <div

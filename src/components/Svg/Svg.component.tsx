@@ -10,8 +10,6 @@ const Svg = forwardRef(
 
     const SVG = icons[icon];
 
-    console.log(SVG);
-
     return (
       <span ref={ref} className={wrapperClassNames}>
         <SVG className={classNames} {...otherProps} aria-hidden="true" />

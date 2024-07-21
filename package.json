@@ -9,8 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@chakra-ui/slider": "^2.1.0",
+    "@chakra-ui/tooltip": "^2.3.1",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
     "@headlessui/react": "^2.1.2",
     "@hookform/resolvers": "^3.9.0",
+    "@mui/material": "^5.16.4",
     "@prisma/client": "^5.16.2",
     "@reduxjs/toolkit": "^2.2.6",
     "axios": "^1.7.2",

@@ -74,11 +74,8 @@ const Paginator = ({ perPage, currentPage, total }: PaginatorParams) => {
     const maxNumberOfPages = Math.ceil(total / perPage);
     const maxPageAvailable = Math.min(currentPage, maxNumberOfPages);
 
-    console.log("maxPageAvailable, ", maxPageAvailable, currentPage);
     handlePageChange(maxPageAvailable);
   }, [perPage, currentPage, total]);
-
-  console.log(perPage, currentPage, total);
 
   return (
     <div className="paginator flex gap-3">

@@ -37,7 +37,10 @@ export const getFilteredProducts = (state) => {
           return false;
         }
       }
-      if (filters.category && product.category !== filters.category) {
+      if (
+        filters.category.length &&
+        !filters.category.includes(product.category)
+      ) {
         return false;
       }
       if (

@@ -15,22 +15,8 @@ const Products = () => {
   const maxPages = Math.ceil(products.length / queryParams.perPage);
   const dispatch = useAppDispatch();
 
-  console.log(queryParams);
-
-  console.log(">ZZZZZZ, ", products);
-
-  const onSearchChange = (q) => {
-    dispatch({
-      type: productActions.STORE_PRODUCT_FILTERS,
-      response: {
-        q,
-      },
-    });
-  };
-
   return (
     <>
-      <Search onChange={onSearchChange} />
       <Container>
         <Row>
           {products.map((product) => (

@@ -36,8 +36,6 @@ export function* startLogin({ promise, payload }) {
       ...formData,
     });
 
-    console.log(response);
-
     if (response.error) {
       throw new Error(response.error);
     }
@@ -48,8 +46,6 @@ export function* startLogin({ promise, payload }) {
     if (!session) {
       throw new Error("Failed to fetch user session");
     }
-
-    console.log(session);
 
     const { user, accessToken } = session;
 

@@ -48,22 +48,9 @@ const Login: React.FC = () => {
   };
 
   const onSubmit: SubmitHandler<TFormValues> = (formData) => {
-    console.log("submitting", formData);
-
     onSubmitAPI(formData)
       .then(() => {})
       .catch(() => {});
-
-    // startTransition(() => {
-    //   loginAction(formData)
-    //     .then(() => {
-    //       console.log("Login successful");
-    //     })
-    //     .catch((error) => {
-    //       console.error("Login failed", error);
-    //       // TODO: NOTIFICATION PROVIDER
-    //     });
-    // });
   };
 
   return (

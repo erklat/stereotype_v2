@@ -24,8 +24,6 @@ export default async function RootLayout({
 }>) {
   const session = await getServerSession(authOptions);
 
-  console.log("layout session,", session);
-
   return (
     <React.StrictMode>
       <AuthProvider>
