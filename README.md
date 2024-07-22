@@ -19,7 +19,7 @@ docker-compose up -d
 Now, run migrations and seed the database:
 
 ```bash
-npm prisma migrate dev
+npx prisma migrate dev
 ```
 
 Finally, run the development server:
