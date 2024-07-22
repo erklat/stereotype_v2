@@ -2,14 +2,15 @@
 import { useRef } from "react";
 import { Provider } from "react-redux";
 import { makeStore, AppStore } from "@/state-management/store";
-import { useSession } from "next-auth/react";
 import { actions as authActions } from "@/utils/AuthManager/AuthManager.reducer";
+import { Session } from "next-auth";
 
 export default function StoreProvider({
   children,
   session,
 }: {
   children: React.ReactNode;
+  session: Session | null;
 }) {
   const storeRef = useRef<AppStore>();
 

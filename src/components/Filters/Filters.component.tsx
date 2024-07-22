@@ -91,7 +91,7 @@ const Filters = () => {
                       ? queryParams.priceRange
                       : [minPrice, maxPrice]
                   }
-                  onChange={(val: Number[]) =>
+                  onChange={(val: number | Number[]) =>
                     onFiltersChange({ priceRange: val })
                   }
                 />

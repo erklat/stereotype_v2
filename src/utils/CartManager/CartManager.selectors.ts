@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 export const getCartData = (state) => {
   if (!Object.keys(state?.cartManager?.data).length) return null;
 

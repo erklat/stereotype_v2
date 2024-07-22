@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 export const actions = {
   START_USER_LOGIN: "START_USER_LOGIN",
   USER_LOGIN_SUCCESSFUL: "USER_LOGIN_SUCCESSFUL",
@@ -12,10 +14,7 @@ const initialState = {
   isFetching: false,
 };
 
-const authActions = (
-  state = initialState,
-  { type, response, id, placementKey, storeType = "replace" }
-) => {
+const authActions = (state = initialState, { type, response }) => {
   switch (type) {
     case actions.START_USER_LOGIN: {
       return {

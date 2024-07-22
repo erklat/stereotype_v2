@@ -1,13 +1,12 @@
-import { useAppSelector, useAppDispatch } from "@/state-management/hooks";
+import { useAppSelector } from "@/state-management/hooks";
 import {
   getFilteredProducts,
   getQueryParams,
 } from "@/utils/ProductsManager/ProductsManager.selectors";
-import Search from "@/components/Search/Search.component";
 import Pagination from "@/components/Pagination/Pagination.component";
-import { actions as productActions } from "@/utils/ProductsManager/ProductsManager.reducer";
 import { Container, Row, Column } from "@/components/Layout/Layout.component";
 import ProductCard from "@/components/Products/components/ProductCard.component";
+import { TProduct } from "@/utils/ProductsManager/types";
 
 const Products = () => {
   const { products, total } = useAppSelector(getFilteredProducts);
@@ -17,7 +16,7 @@ const Products = () => {
     <>
       <Container>
         <Row>
-          {products.map((product) => (
+          {products.map((product: TProduct) => (
             <Column key={product.id} span={3}>
               <ProductCard product={product} />
             </Column>

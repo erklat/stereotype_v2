@@ -29,13 +29,12 @@ const Input: React.FC<TInputProps> = ({
       <div
         className={`
             relative 
-            border
-            border-solid
-            border-black
-            rounded
+            
         `}
       >
-        {children}
+        <div className="overflow-auto border border-solid border-black rounded">
+          {children}
+        </div>
         {label && (
           <label
             htmlFor={name}

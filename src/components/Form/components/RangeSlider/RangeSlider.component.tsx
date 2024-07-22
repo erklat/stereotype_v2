@@ -1,6 +1,13 @@
 import Slider from "@mui/material/Slider";
 
-const RangeSlider = ({ min, max, onChange, value }) => {
+type TSliderProps = {
+  min: number;
+  max: number;
+  onChange: (value: number | number[]) => void;
+  value: number;
+};
+
+const RangeSlider = ({ min, max, onChange, value }: TSliderProps) => {
   const handleChange = (_event: Event, newValue: number | number[]) => {
     onChange(newValue);
   };

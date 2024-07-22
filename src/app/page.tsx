@@ -2,7 +2,6 @@
 
 import { useEffect, useCallback } from "react";
 import Image from "next/image";
-import StoreProvider from "@/state-management/StoreProvider";
 import { useAppDispatch } from "@/state-management/hooks";
 import { actions as productActions } from "@/utils/ProductsManager/ProductsManager.reducer";
 import Filters from "@/components/Filters/Filters.component";
@@ -39,41 +38,6 @@ export default function Home() {
     });
   }, [dispatch]);
 
-  const onSortChangeAPI = (val: string) => {
-    const [sortBy, order] = val.split("-");
-
-    return new Promise((resolve, reject) => {
-      dispatch({
-        type: productActions.START_FETCHING_PRODUCTS,
-        promise: { resolve, reject },
-        params: {
-          sortBy,
-          order,
-        },
-      });
-    });
-  };
-
-  const onCategoryChangeAPI = (slug: string) => {
-    return new Promise((resolve, reject) => {
-      dispatch({
-        type: productActions.START_FETCHING_CATEGORY_PRODUCTS,
-        promise: { resolve, reject },
-        params: {
-          category: slug,
-        },
-      });
-    });
-  };
-
-  const onSortChange = async (val: string) => {
-    await onSortChangeAPI(val);
-  };
-
-  const onCategoryChange = async (slug: string) => {
-    await onCategoryChangeAPI(slug);
-  };
-
   useEffect(() => {
     fetchProductsAPI();
     fetchCategoriesAPI();
@@ -82,10 +46,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Filters
-        onSortChange={onSortChange}
-        onCategoryChange={onCategoryChange}
-      />
+      <Filters />
 
       <Products />
 

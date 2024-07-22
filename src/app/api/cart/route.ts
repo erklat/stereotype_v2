@@ -80,6 +80,8 @@ export async function POST(
       include: { cartItems: true },
     });
 
+    if (!cartData) throw new Error("Error retrieving cart from DB.");
+
     const response = {
       ...cartData,
       total: currency(cartData.total.toNumber()),
@@ -88,8 +90,12 @@ export async function POST(
         ...item,
         price: currency(item.price.toNumber()),
         total: currency(item.total.toNumber()),
-        discountedTotal: currency(item.discountedTotal?.toNumber()),
-        discountPercentage: currency(item.discountPercentage?.toNumber()),
+        discountedTotal: item.discountedTotal
+          ? currency(item.discountedTotal.toNumber())
+          : 0,
+        discountPercentage: item.discountPercentage
+          ? currency(item.discountPercentage.toNumber())
+          : 0,
       })),
     };
 

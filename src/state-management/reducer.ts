@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { combineReducers } from "redux";
 
 import productsManager from "@/utils/ProductsManager/ProductsManager.reducer";

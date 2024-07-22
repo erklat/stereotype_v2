@@ -2,20 +2,11 @@ import React from "react";
 import { useAppDispatch } from "@/state-management/hooks";
 import { actions as cartActions } from "@/utils/CartManager/CartManager.reducer";
 
-import Button from "@/components/Button/Button.component";
-
 import QuantityControl from "@/components/Cart/QuantityControl/QuantityControl.component";
+import { TProduct } from "@/utils/ProductsManager/types";
+import Image from "next/image";
 
-interface ProductCardProps {
-  id: string;
-  title: string;
-  thumbnail: string;
-  brand: string;
-  price: number;
-  discount?: number;
-}
-
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard = ({ product }: { product: TProduct }) => {
   const dispatch = useAppDispatch();
 
   const { id, title, thumbnail, brand, price, discount } = product;
@@ -23,7 +14,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     ? (price - (price * discount) / 100).toFixed(2)
     : price.toFixed(2);
 
-  const addToCartAPI = (product) => {
+  const addToCartAPI = (product: TProduct) => {
     return new Promise((resolve, reject) => {
       dispatch({
         type: cartActions.START_ADD_PRODUCT,
@@ -37,7 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     });
   };
 
-  const addToCart = (product) => {
+  const addToCart = (product: TProduct) => {
     addToCartAPI(product)
       .then(() => {})
       .catch(() => {});
@@ -45,12 +36,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <div
-      id={id}
+      id={id.toString()}
       className="border rounded-lg p-4 shadow-md"
       aria-labelledby={`product-title-${id}`}
       aria-describedby={`product-description-${id}`}
     >
-      <img
+      <Image
         src={thumbnail}
         alt={`${title} thumbnail`}
         className="w-full h-48 object-cover rounded"

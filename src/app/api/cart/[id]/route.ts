@@ -5,6 +5,12 @@ import {
   parseCartDataToResponse,
   calculateDiscountedPrice,
 } from "@/utils/CartManager/utils";
+import { TProduct } from "@/utils/ProductsManager/types";
+
+// Define the type for the context object which includes params
+interface Context {
+  params: { [key: string]: string };
+}
 
 const prisma = new PrismaClient();
 
@@ -64,8 +70,8 @@ export async function GET(
         ...item,
         price: item.price.toNumber(),
         total: item.total.toNumber(),
-        discountedTotal: item.discountedTotal.toNumber(),
-        discountPercentage: item.discountPercentage.toNumber(),
+        discountedTotal: item?.discountedTotal?.toNumber() || 0,
+        discountPercentage: item?.discountPercentage?.toNumber() || 0,
       })),
     };
 
@@ -83,7 +89,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: NextResponse
+  { params }: Context
 ): Promise<NextResponse> {
   try {
     const payload = await req.json();
@@ -115,7 +121,7 @@ export async function POST(
 
     const updateCart = async () => {
       await Promise.all(
-        newProducts.map(async (product) => {
+        newProducts.map(async (product: TProduct) => {
           await prisma.cartItem.upsert({
             where: {
               cartId_productId: {

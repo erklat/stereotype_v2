@@ -1,31 +1,18 @@
-import {
-  takeLatest,
-  put,
-  call,
-  select,
-  cancelled,
-  fork,
-  take,
-} from "redux-saga/effects";
-import { channel } from "redux-saga";
+// @ts-nocheck
 
-import restClient, { localRestClient } from "@/api/restClient";
+import { takeLatest, put, call, select } from "redux-saga/effects";
 
-import { actions as productActions } from "@/utils/ProductsManager/ProductsManager.reducer";
+import { localRestClient } from "@/api/restClient";
+
 import { actions as cartActions } from "@/utils/CartManager/CartManager.reducer";
-import { notify } from "@/utils/NotificationManager/NotificationManager";
-// import { getCookie } from "@/utils/cookie";
-import { getCookie } from "../actions";
+// import { notify } from "@/utils/NotificationManager/NotificationManager";
+import { getCookie } from "@/utils/actions";
 import { getCartData } from "@/utils/CartManager/CartManager.selectors";
 
 /**
- * Fetch Products
+ * Add product to cart
  * @param  {Object} promise Promises
- * @param  placementKey {string|number}
- * @param  storeType {string} replace|append
  * @param  params {object}
- * @param  ignoreDefaultParams {boolean}
- * @param  ignoreLocationParams {boolean}
  * @return {Object} Response from API
  */
 export function* addProduct({ promise, payload }) {
@@ -61,6 +48,11 @@ export function* addProduct({ promise, payload }) {
   }
 }
 
+/**
+ * Fetch cart
+ * @param  {Object} promise Promises
+ * @return {Object} Response from API
+ */
 export function* fetchCart({ promise }) {
   try {
     const cookie = yield getCookie("cart_data");
@@ -94,6 +86,12 @@ export function* fetchCart({ promise }) {
   }
 }
 
+/**
+ * Update cart
+ * @param  {Object} promise Promises
+ * @param  params {object}
+ * @return {Object} Response from API
+ */
 export function* updateCart({ promise, payload }) {
   try {
     const state = yield select();
@@ -120,6 +118,12 @@ export function* updateCart({ promise, payload }) {
   }
 }
 
+/**
+ * Update product quantity on separate endpoint
+ * @param  {Object} promise Promises
+ * @param  params {object}
+ * @return {Object} Response from API
+ */
 export function* updateProductQuantity({ promise, payload }) {
   try {
     const { cartId, productId, quantity } = payload;

@@ -51,7 +51,7 @@ const Dropdown: React.FC<DropdownProps> = ({ trigger, children }) => {
         leaveTo="transform opacity-0 scale-95"
       >
         <div
-          className="absolute left-0 origin-top-left rounded-xl border border-white/5 bg-gray-800 text-sm text-white p-4"
+          className="absolute left-0 origin-top-left rounded-xl border border-white/5 bg-white text-sm text-slate-600 p-4"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="dropdown-menu"

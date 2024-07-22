@@ -32,7 +32,7 @@ const LoginForm = () => {
     resolver: yupResolver(loginValidationSchema),
   });
 
-  const onSubmitAPI = (formData) => {
+  const onSubmitAPI = (formData: TFormValues) => {
     return new Promise((resolve, reject) => {
       dispatch({
         type: authActions.START_USER_LOGIN,

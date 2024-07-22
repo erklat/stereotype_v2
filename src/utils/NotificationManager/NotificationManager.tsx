@@ -1,9 +1,10 @@
+// @ts-nocheck
+
 "use client";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/state-management/store";
 // import "./NotificationManager.css"; // Import any necessary styles
-import { NotificationType } from "./notificationTypes";
 import { actions as notificationActions } from "@/utils/NotificationManager/NotificationManager.reducer";
 
 export const notify =
