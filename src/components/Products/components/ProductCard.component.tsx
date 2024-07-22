@@ -6,6 +6,7 @@ import QuantityControl from "@/components/Cart/QuantityControl/QuantityControl.c
 import { TProduct } from "@/utils/ProductsManager/types";
 import Image from "next/image";
 import Svg from "@/components/Svg/Svg.component";
+import { trimString } from "@/utils/utils";
 
 const ProductCard = ({
   product,
@@ -16,7 +17,7 @@ const ProductCard = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const { id, title, thumbnail, brand, price, discount } = product;
+  const { id, title, thumbnail, brand, price, discount, description } = product;
   const discountedPrice = discount
     ? (price - (price * discount) / 100).toFixed(2)
     : price.toFixed(2);
@@ -64,6 +65,7 @@ const ProductCard = ({
           <p id={`product-description-${id}`} className="text-sm text-gray-600">
             {brand}
           </p>
+          <p>{trimString(description)}</p>
           <div className="mt-2">
             {discount ? (
               <>
