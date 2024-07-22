@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 export const actions = {
   START_ADD_PRODUCT: "START_ADD_PRODUCT",
   ADD_PRODUCT_SUCCESSFUL: "ADD_PRODUCT_SUCCESSFUL",

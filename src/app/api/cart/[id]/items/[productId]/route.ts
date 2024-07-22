@@ -67,11 +67,11 @@ export async function PATCH(
         },
         data: {
           quantity,
-          total: existingCartItem.price * quantity,
+          total: Number(existingCartItem.price) * quantity,
           discountedTotal:
             calculateDiscountedPrice(
-              existingCartItem.price,
-              existingCartItem.discountPercentage
+              Number(existingCartItem.price),
+              Number(existingCartItem?.discountPercentage)
             ) * quantity,
         },
       });

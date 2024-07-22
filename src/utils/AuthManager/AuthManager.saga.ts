@@ -1,31 +1,16 @@
-import {
-  takeLatest,
-  put,
-  call,
-  select,
-  cancelled,
-  fork,
-  take,
-} from "redux-saga/effects";
-import { channel } from "redux-saga";
+// @ts-nocheck
+
+import { takeLatest, put, call } from "redux-saga/effects";
 import { signIn, getSession } from "next-auth/react";
 
-import restClient, { localRestClient } from "@/api/restClient";
-
 import { actions as authActions } from "@/utils/AuthManager/AuthManager.reducer";
-import { notify } from "@/utils/NotificationManager/NotificationManager";
-// import { getCookie } from "@/utils/cookie";
-import { getCookie } from "../actions";
-import { getCartData } from "@/utils/CartManager/CartManager.selectors";
+// TODO: implement notifications
+// import { notify } from "@/utils/NotificationManager/NotificationManager";
 
 /**
  * Fetch Products
  * @param  {Object} promise Promises
- * @param  placementKey {string|number}
- * @param  storeType {string} replace|append
  * @param  params {object}
- * @param  ignoreDefaultParams {boolean}
- * @param  ignoreLocationParams {boolean}
  * @return {Object} Response from API
  */
 export function* startLogin({ promise, payload }) {

@@ -12,3 +12,14 @@ export type TProductCategory = {
   name: string;
   url: string;
 };
+
+export type TProduct = {
+  id: number;
+  quantity: number;
+  price: number;
+  discountPercentage: number | undefined;
+  title: string;
+  thumbnail: string;
+  brand: string;
+  discount: number;
+};

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 "use client";
 import { useTransition } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";

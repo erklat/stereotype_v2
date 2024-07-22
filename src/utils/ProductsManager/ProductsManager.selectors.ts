@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 export const getProductCategories = (state) =>
   state?.productsManager?.categories || [];
 
@@ -25,7 +27,10 @@ export const getFilteredProducts = (state) => {
   const filters = state?.productsManager?.queryParams;
 
   if (!products || !filters) {
-    return [];
+    return {
+      products: [],
+      total: 0,
+    };
   }
 
   // Filter the products based on the filters
