@@ -2,7 +2,7 @@ import React from "react";
 import Svg from "@/components/Svg/Svg.component";
 
 interface Option {
-  value: string;
+  value: string | number;
   label: string;
 }
 

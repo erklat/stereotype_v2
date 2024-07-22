@@ -15,33 +15,27 @@ import RangeSlider from "@/components/Form/components/RangeSlider/RangeSlider.co
 import SearchBox from "@/components/SearchBox/SearchBox.component";
 import { Container, Row } from "@/components/Layout/Layout.component";
 import Button from "@/components/Button/Button.component";
+import { TFilterParams, TProductCategory } from "@/utils/ProductsManager/types";
 
 const options = [
-  { label: "Naziv uzlazno", value: "title-asc" },
-  { label: "Naziv silazno", value: "title-desc" },
-  { label: "Cijena uzlazno", value: "price-asc" },
-  { label: "Cijena silazno", value: "price-desc" },
+  { label: "Title ascending", value: "title-asc" },
+  { label: "Title descending", value: "title-desc" },
+  { label: "Price ascending", value: "price-asc" },
+  { label: "Price descending", value: "price-desc" },
 ];
 
-type TProps = {
-  onSortChange: (arg1: string) => void;
-  onCategoryChange: (arg1: string) => void;
-};
-
-const Filters = ({ onSortChange, onCategoryChange }: TProps) => {
+const Filters = () => {
   const productCategories = useAppSelector(getProductCategories);
   const { minPrice, maxPrice } = useAppSelector(getMinMaxProductPrices);
   const queryParams = useAppSelector(getQueryParams);
   const dispatch = useAppDispatch();
 
-  const onFiltersChange = (data) => {
+  const onFiltersChange = (data: TFilterParams) => {
     dispatch({
       type: productActions.STORE_PRODUCT_FILTERS,
       response: data,
     });
   };
-
-  console.log(queryParams);
 
   return (
     <Container>
@@ -49,7 +43,7 @@ const Filters = ({ onSortChange, onCategoryChange }: TProps) => {
         <div className="flex gap-3">
           <div>
             <Dropdown trigger={<Svg icon="sort" />}>
-              <div>
+              <div className="gap-4 w-48 flex flex-col">
                 {options.map((option) => (
                   <Radio
                     key={option.value}
@@ -71,10 +65,12 @@ const Filters = ({ onSortChange, onCategoryChange }: TProps) => {
             <Dropdown trigger={<Svg icon="filter" />}>
               <div className="w-96">
                 <MultiSelect
-                  options={productCategories.map((option) => ({
-                    value: option.slug,
-                    label: option.name,
-                  }))}
+                  options={productCategories.map(
+                    (option: TProductCategory) => ({
+                      value: option.slug,
+                      label: option.name,
+                    })
+                  )}
                   selectedOptions={queryParams?.category}
                   onChange={(category) => {
                     onFiltersChange({ category });
@@ -95,10 +91,9 @@ const Filters = ({ onSortChange, onCategoryChange }: TProps) => {
                       ? queryParams.priceRange
                       : [minPrice, maxPrice]
                   }
-                  onChange={(val) => {
-                    console.log(val);
-                    onFiltersChange({ priceRange: val });
-                  }}
+                  onChange={(val: Number[]) =>
+                    onFiltersChange({ priceRange: val })
+                  }
                 />
               </div>
             </Dropdown>
@@ -131,21 +126,26 @@ const Filters = ({ onSortChange, onCategoryChange }: TProps) => {
           </div>
         </div>
       </Row>
-      <Row>
-        Active Filters:{" "}
-        {`${queryParams.sortBy}-${queryParams.sortDirection}` !==
-          "title-asc" && (
-          <Button
-            label={
-              options.find(
-                (option) =>
-                  option.value ===
-                  `${queryParams.sortBy}-${queryParams.sortDirection}`
-              )?.label || ""
-            }
-          />
-        )}
-      </Row>
+
+      {/* 
+        // TODO: implement active filters
+
+        <Row>
+          Active Filters:{" "}
+          {`${queryParams.sortBy}-${queryParams.sortDirection}` !==
+            "title-asc" && (
+            <Button
+              label={
+                options.find(
+                  (option) =>
+                    option.value ===
+                    `${queryParams.sortBy}-${queryParams.sortDirection}`
+                )?.label || ""
+              }
+            />
+          )}
+        </Row> 
+      */}
     </Container>
   );
 };
