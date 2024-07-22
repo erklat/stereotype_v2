@@ -10,7 +10,9 @@ export const makeStore = () => {
   const store = configureStore({
     reducer,
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware()
+      getDefaultMiddleware({
+        serializableCheck: false,
+      })
         // prepend and concat calls can be chained
         .prepend(sagaMiddleware)
         .concat(logger),

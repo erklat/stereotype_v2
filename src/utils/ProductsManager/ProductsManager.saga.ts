@@ -78,7 +78,9 @@ export function* fetchCategories({ promise }) {
       response: data,
     });
 
-    yield call(promise.resolve, data);
+    if (promise.resolve) {
+      yield call(promise.resolve, data);
+    }
   } catch (error) {
     yield put({
       type: productActions.FETCHING_CATEGORIES_FAILED,

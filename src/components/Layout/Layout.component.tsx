@@ -21,13 +21,37 @@ export const Row: React.FC<RowProps> = ({ children }) => {
 };
 
 interface ColumnProps {
-  children: ReactNode;
-  span?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+  children: React.ReactNode;
+  span?: number;
+  smSpan?: number;
+  mdSpan?: number;
+  lgSpan?: number;
+  xlSpan?: number;
+  xxlSpan?: number;
 }
 
-export const Column: React.FC<ColumnProps> = ({ children, span = 12 }) => {
-  const columnSpan = `col-span-${3}`;
-  return <div className={`${columnSpan} mt-10`}>{children}</div>;
+export const Column: React.FC<ColumnProps> = ({
+  children,
+  span = 12,
+  smSpan,
+  mdSpan,
+  lgSpan,
+  xlSpan,
+  xxlSpan,
+}) => {
+  const getColumnSpanClass = (span: number | undefined, prefix: string = "") =>
+    span ? `${prefix}col-span-${span} ` : "";
+
+  const responsiveClasses = [
+    getColumnSpanClass(span),
+    getColumnSpanClass(smSpan, "sm:"),
+    getColumnSpanClass(mdSpan, "md:"),
+    getColumnSpanClass(lgSpan, "lg:"),
+    getColumnSpanClass(xlSpan, "xl:"),
+    getColumnSpanClass(xxlSpan, "2xl:"),
+  ].join("");
+
+  return <div className={responsiveClasses}>{children}</div>;
 };
 
 const Layout = {
