@@ -6,7 +6,7 @@ import { localRestClient } from "@/api/restClient";
 
 import { actions as cartActions } from "@/utils/CartManager/CartManager.reducer";
 // import { notify } from "@/utils/NotificationManager/NotificationManager";
-import { getCookie } from "@/utils/actions";
+import { deleteCookie, getCookie } from "@/utils/actions";
 import { getCartData } from "@/utils/CartManager/CartManager.selectors";
 
 /**
@@ -81,6 +81,8 @@ export function* fetchCart({ promise }) {
     yield put({
       type: cartActions.FETCHING_CART_FAILED,
     });
+
+    yield deleteCookie("cart_data");
 
     yield call(promise.reject, error);
   }

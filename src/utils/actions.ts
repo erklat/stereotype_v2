@@ -11,3 +11,7 @@ export const getCookie = async (key: string) => {
 
   return cookie ? JSON.parse(cookie.value) : null;
 };
+
+export const deleteCookie = async (name: string) => {
+  cookies().delete(name);
+};

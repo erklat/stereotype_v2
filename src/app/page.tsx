@@ -39,9 +39,9 @@ export default function Home() {
   }, [dispatch]);
 
   useEffect(() => {
-    fetchProductsAPI();
-    fetchCategoriesAPI();
-    fetchCartAPI();
+    fetchProductsAPI().catch(() => {});
+    fetchCategoriesAPI().catch(() => {});
+    fetchCartAPI().catch(() => {});
   }, [fetchProductsAPI, fetchCategoriesAPI, fetchCartAPI]);
 
   return (
