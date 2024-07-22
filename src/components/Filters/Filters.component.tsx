@@ -65,31 +65,7 @@ const Filters = ({ onSortChange, onCategoryChange }: TProps) => {
                   />
                 ))}
               </div>
-              {/* <RadioGroup
-            options={options}
-            value={`${queryParams.sortBy}-${queryParams.sortDirection}`}
-            onChange={({ value }) => {
-              const [sortBy, sortDirection] = value.split("-");
-              onFiltersChange({ sortBy, sortDirection });
-            }}
-          /> */}
             </Dropdown>
-            {/* <select
-          name="cars"
-          id="cars"
-          onChange={(e) => {
-            const [sortBy, sortDirection] = e.target.value.split("-");
-            onFiltersChange({ sortBy, sortDirection });
-            // onSortChange(e.target.value);
-          }}
-          className={`text-black`}
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select> */}
           </div>
           <div>
             <Dropdown trigger={<Svg icon="filter" />}>
@@ -106,16 +82,6 @@ const Filters = ({ onSortChange, onCategoryChange }: TProps) => {
                 />
               </div>
             </Dropdown>
-            {/* <select
-          className={`text-black`}
-          onChange={(e) => onFiltersChange({ category: e.target.value })}
-        >
-          {productCategories.map((category) => (
-            <option key={category.slug} value={category.slug}>
-              {category.name}
-            </option>
-          ))}
-        </select> */}
           </div>
 
           <div>
@@ -159,7 +125,7 @@ const Filters = ({ onSortChange, onCategoryChange }: TProps) => {
 
           <div>
             <SearchBox
-              onChange={(e) => onFiltersChange({ q: e.target.value })}
+              onChange={(q) => onFiltersChange({ q })}
               value={queryParams?.q || ""}
             />
           </div>

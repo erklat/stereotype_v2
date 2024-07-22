@@ -79,7 +79,10 @@ export const getFilteredProducts = (state) => {
   const startIndex = (validCurrentPage - 1) * perPage;
   const endIndex = startIndex + perPage;
 
-  return filteredProducts.slice(startIndex, endIndex);
+  return {
+    products: filteredProducts.slice(startIndex, endIndex),
+    total: filteredProducts.length,
+  };
 };
 
 export const getQueryParams = (state) => {
