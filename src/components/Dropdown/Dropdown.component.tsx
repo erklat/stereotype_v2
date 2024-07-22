@@ -7,12 +7,22 @@ import React, {
 } from "react";
 import { Transition } from "@headlessui/react";
 
+export enum Orientation {
+  Left = "left",
+  Right = "right",
+}
+
 interface DropdownProps {
   trigger: ReactElement;
   children: ReactNode;
+  orientation?: Orientation;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ trigger, children }) => {
+const Dropdown: React.FC<DropdownProps> = ({
+  trigger,
+  children,
+  orientation = Orientation.Left,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -34,9 +44,14 @@ const Dropdown: React.FC<DropdownProps> = ({ trigger, children }) => {
   }, []);
 
   return (
-    <div className="relative inline-block text-left" ref={menuRef}>
+    <div className="relative inline-block text-left z-10" ref={menuRef}>
       {trigger && (
-        <div onClick={handleToggle} aria-haspopup="true" aria-expanded={isOpen}>
+        <div
+          onClick={handleToggle}
+          aria-haspopup="true"
+          aria-expanded={isOpen}
+          className="flex gap-3 cursor-pointer"
+        >
           {React.cloneElement(trigger)}
         </div>
       )}
@@ -51,7 +66,7 @@ const Dropdown: React.FC<DropdownProps> = ({ trigger, children }) => {
         leaveTo="transform opacity-0 scale-95"
       >
         <div
-          className="absolute left-0 origin-top-left rounded-xl border border-white/5 bg-white text-sm text-slate-600 p-4"
+          className={`absolute ${orientation}-0 top-10 origin-top-${orientation} rounded-xl border border-white/5 bg-white text-sm text-slate-600 p-4`}
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="dropdown-menu"

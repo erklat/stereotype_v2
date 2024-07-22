@@ -59,22 +59,30 @@ const QuantityControl = ({ product }: { product: TProduct }) => {
     <div className={`flex`}>
       {productInCart ? (
         <>
-          <button
-            type="button"
-            onClick={() => updateProductQuantity(currentQuantity - 1)}
-          >
-            -
-          </button>
-          {/* <input type="number" onChange={() => onQuantityChange()} /> */}
-          <button
-            type="button"
-            onClick={() => updateProductQuantity(currentQuantity + 1)}
-          >
-            +
-          </button>
+          <div className="flex justify-between w-full bg-white border border-blue-500 p-1 rounded-3xl items-center">
+            <button
+              type="button"
+              onClick={() => updateProductQuantity(currentQuantity - 1)}
+              className="rounded-full w-8 h-8 bg-blue-500 text-white"
+            >
+              -
+            </button>
+            <span className="text-slate-500">{productInCart?.quantity}</span>
+            <button
+              type="button"
+              onClick={() => updateProductQuantity(currentQuantity + 1)}
+              className="rounded-full w-8 h-8 bg-blue-500 text-white"
+            >
+              +
+            </button>
+          </div>
         </>
       ) : (
-        <button type="button" onClick={() => addToCart()}>
+        <button
+          type="button"
+          onClick={() => addToCart()}
+          className="flex justify-center w-full bg-white border border-blue-500 p-1 rounded-3xl items-center text-slate-500 h-[42px]"
+        >
           Add to Cart
         </button>
       )}
