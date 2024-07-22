@@ -26,7 +26,7 @@ const defaultParams = {
   sortBy: "title",
   sortDirection: "asc",
   priceRange: [],
-  category: "",
+  category: [],
   currentPage: 1,
   q: "",
 };

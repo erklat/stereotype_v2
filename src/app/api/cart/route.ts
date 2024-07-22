@@ -25,8 +25,6 @@ export async function POST(
     const { userId, products } = payload;
     const hashKey = crypto.randomBytes(20).toString("hex");
 
-    console.log(payload);
-
     // Calculate totals for the entire cart
     const total = products.reduce(
       (acc: number, product: any) => acc + product.price * product.quantity,
@@ -112,10 +110,11 @@ export async function POST(
 
     return NextResponse.json({ data: response });
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : String(error) },
       { status: 405 }
     );
+  } finally {
+    await prisma.$disconnect(); // Disconnect Prisma client
   }
 }

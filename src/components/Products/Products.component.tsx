@@ -10,27 +10,11 @@ import { Container, Row, Column } from "@/components/Layout/Layout.component";
 import ProductCard from "@/components/Products/components/ProductCard.component";
 
 const Products = () => {
-  const products = useAppSelector(getFilteredProducts);
+  const { products, total } = useAppSelector(getFilteredProducts);
   const queryParams = useAppSelector(getQueryParams);
-  const maxPages = Math.ceil(products.length / queryParams.perPage);
-  const dispatch = useAppDispatch();
-
-  console.log(queryParams);
-
-  console.log(">ZZZZZZ, ", products);
-
-  const onSearchChange = (q) => {
-    dispatch({
-      type: productActions.STORE_PRODUCT_FILTERS,
-      response: {
-        q,
-      },
-    });
-  };
 
   return (
     <>
-      <Search onChange={onSearchChange} />
       <Container>
         <Row>
           {products.map((product) => (
@@ -42,7 +26,7 @@ const Products = () => {
       </Container>
 
       <Pagination
-        total={194}
+        total={total}
         currentPage={queryParams.currentPage}
         perPage={queryParams.perPage}
       />

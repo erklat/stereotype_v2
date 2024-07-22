@@ -18,8 +18,6 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const dispatch = useAppDispatch();
 
-  console.log(">>>>", product);
-
   const { id, title, thumbnail, brand, price, discount } = product;
   const discountedPrice = discount
     ? (price - (price * discount) / 100).toFixed(2)

@@ -9,7 +9,6 @@ import { actions as notificationActions } from "@/utils/NotificationManager/Noti
 export const notify =
   ({ type, title, message, identifier }) =>
   (dispatch: AppDispatch) => {
-    console.log(title, message, identifier);
     dispatch({
       type: notificationActions.ADD_NOTIFICATION,
       response: {
@@ -30,7 +29,6 @@ export const notify =
 
 const NotificationManager: React.FC = () => {
   const notifications = useSelector((state: RootState) => {
-    console.log(state);
     return state.notificationManager.notifications;
   });
   const dispatch = useDispatch<AppDispatch>();

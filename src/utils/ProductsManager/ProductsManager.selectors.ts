@@ -37,7 +37,10 @@ export const getFilteredProducts = (state) => {
           return false;
         }
       }
-      if (filters.category && product.category !== filters.category) {
+      if (
+        filters.category.length &&
+        !filters.category.includes(product.category)
+      ) {
         return false;
       }
       if (
@@ -76,7 +79,10 @@ export const getFilteredProducts = (state) => {
   const startIndex = (validCurrentPage - 1) * perPage;
   const endIndex = startIndex + perPage;
 
-  return filteredProducts.slice(startIndex, endIndex);
+  return {
+    products: filteredProducts.slice(startIndex, endIndex),
+    total: filteredProducts.length,
+  };
 };
 
 export const getQueryParams = (state) => {

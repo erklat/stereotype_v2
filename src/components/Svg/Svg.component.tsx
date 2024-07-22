@@ -1,16 +1,24 @@
 "use client";
 
-import { forwardRef } from "react";
+import { LegacyRef, forwardRef } from "react";
 
 import icons from "./svgManifest";
 
+type TProps = {
+  icon: string;
+  classNames?: string;
+  wrapperClassNames?: string;
+  [x: string]: any;
+};
+
 const Svg = forwardRef(
-  ({ icon, classNames, wrapperClassNames, ...otherProps }, ref) => {
-    if (!icons?.[icon]) return null;
+  (
+    { icon, classNames, wrapperClassNames, ...otherProps }: TProps,
+    ref: LegacyRef<HTMLSpanElement> | null
+  ) => {
+    const SVG = icons?.[icon as keyof typeof icons];
 
-    const SVG = icons[icon];
-
-    console.log(SVG);
+    if (!SVG) return null;
 
     return (
       <span ref={ref} className={wrapperClassNames}>

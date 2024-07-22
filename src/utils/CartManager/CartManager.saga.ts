@@ -29,7 +29,6 @@ import { getCartData } from "@/utils/CartManager/CartManager.selectors";
  * @return {Object} Response from API
  */
 export function* addProduct({ promise, payload }) {
-  console.log("payload", payload);
   try {
     const state = yield select();
     const { products, userId } = payload;
@@ -42,8 +41,6 @@ export function* addProduct({ promise, payload }) {
       }
     );
     const { data } = response;
-
-    console.log(data);
 
     yield put({
       type: cartActions.ADD_PRODUCT_SUCCESSFUL,
@@ -59,8 +56,6 @@ export function* addProduct({ promise, payload }) {
     yield put({
       type: cartActions.ADD_PRODUCT_FAILED,
     });
-
-    console.log(error);
 
     yield call(promise.reject, error);
   }

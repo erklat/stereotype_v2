@@ -3,7 +3,6 @@
 import { cookies } from "next/headers";
 
 export const getAllCookies = async () => {
-  console.log(await cookies().getAll());
   return cookies().getAll();
 };
 

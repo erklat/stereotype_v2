@@ -33,7 +33,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("nextAuth", credentials);
         const { username, password } = credentials;
 
         const response = await restClient.post("/auth/login", {
