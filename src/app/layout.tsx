@@ -9,6 +9,7 @@ import AuthProvider from "@/utils/AuthManager/AuthProvider.component";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Header from "@/components/Header/Header.component";
+import classNames from "classnames";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,7 +30,11 @@ export default async function RootLayout({
       <AuthProvider>
         <StoreProvider session={session}>
           <html lang="en">
-            <body className={inter.className}>
+            <body
+              className={classNames("bg-bg.canvas", {
+                [inter.className]: true,
+              })}
+            >
               <Header />
               {children}
 
