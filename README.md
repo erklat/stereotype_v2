@@ -4,10 +4,6 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-Descriptive part of request and choices here:
-
-[Stereotype_v2](https://docs.google.com/document/d/1qDtCBVSbb0qhRCRZMMCG9DriZsY9F0FttXhoGD6imT8/edit?usp=sharing)
-
 First, install dependencies:
 
 ```bash
