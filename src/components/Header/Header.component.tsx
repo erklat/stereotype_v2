@@ -1,6 +1,7 @@
 import Logo from "@/components/Logo/Logo.component";
 import HeaderActions from "@/components/Header/components/HeaderActions/HeaderActions.components";
 import { Container } from "@/components/Layout/Layout.component";
+import Navigation from "@/components/Header/components/Navigation/Navigation.component";
 
 const Header = () => {
   return (
@@ -8,7 +9,7 @@ const Header = () => {
       <Container>
         <div className="h-20 flex items-center justify-between">
           <Logo />
-          {/* <Menu /> */}
+          <Navigation />
           <HeaderActions />
         </div>
       </Container>
