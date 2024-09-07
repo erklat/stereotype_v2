@@ -1,14 +1,14 @@
-import React, { useRef } from "react";
+import React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "@/state-management/StoreProvider";
-import { makeStore, AppStore } from "@/state-management/store";
 import NotificationManager from "@/utils/NotificationManager/NotificationManager";
 import AuthProvider from "@/utils/AuthManager/AuthProvider.component";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Header from "@/components/Header/Header.component";
+import QueryProvider from "@/utils/query/QueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,18 +26,20 @@ export default async function RootLayout({
 
   return (
     <React.StrictMode>
-      <AuthProvider>
-        <StoreProvider session={session}>
-          <html lang="en">
-            <body className={inter.className}>
-              <Header />
-              {children}
+      <QueryProvider>
+        <AuthProvider>
+          <StoreProvider session={session}>
+            <html lang="en">
+              <body className={inter.className}>
+                <Header />
+                {children}
 
-              <NotificationManager />
-            </body>
-          </html>
-        </StoreProvider>
-      </AuthProvider>
+                <NotificationManager />
+              </body>
+            </html>
+          </StoreProvider>
+        </AuthProvider>
+      </QueryProvider>
     </React.StrictMode>
   );
 }
