@@ -11,8 +11,8 @@ import ProductCard from "@/components/Products/components/ProductCard.component"
 import ProductModal from "@/components/Products/components/ProductModal.component";
 import { TProduct } from "@/utils/ProductsManager/types";
 
-const Products = () => {
-  const { products, total } = useAppSelector(getFilteredProducts);
+const Products = ({ products }: { products: TProduct[] }) => {
+  const { total } = useAppSelector(getFilteredProducts);
   const queryParams = useAppSelector(getQueryParams);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(

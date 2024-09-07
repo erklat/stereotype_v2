@@ -7,8 +7,17 @@ import { actions as productActions } from "@/utils/ProductsManager/ProductsManag
 import Filters from "@/components/Filters/Filters.component";
 import Products from "@/components/Products/Products.component";
 import { actions as cartActions } from "@/utils/CartManager/CartManager.reducer";
+import { useQuery } from "@tanstack/react-query";
+import { getProducts } from "@/utils/ProductsManager/product.queries";
+import { getProductsAPI } from "@/utils/ProductsManager/product.api";
 
 export default function Home() {
+  const productsQuery = useQuery({
+    queryKey: ["products"],
+    queryFn: getProductsAPI,
+  });
+  const { data, isLoading, isError } = productsQuery;
+  const products = data?.products || [];
   const dispatch = useAppDispatch();
 
   const fetchProductsAPI = useCallback(() => {
@@ -39,16 +48,19 @@ export default function Home() {
   }, [dispatch]);
 
   useEffect(() => {
-    fetchProductsAPI().catch(() => {});
+    // fetchProductsAPI().catch(() => {});
+    // getProducts();
     fetchCategoriesAPI().catch(() => {});
     fetchCartAPI().catch(() => {});
   }, [fetchProductsAPI, fetchCategoriesAPI, fetchCartAPI]);
+
+  console.log(data);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between pb-10">
       <Filters />
 
-      <Products />
+      <Products products={products} />
     </main>
   );
 }
