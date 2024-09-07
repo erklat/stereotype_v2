@@ -17,7 +17,7 @@ export default function Home() {
     queryFn: getProductsAPI,
   });
   const { data, isLoading, isError } = productsQuery;
-  const products = data?.products || [];
+  const products = data?.data || [];
   const dispatch = useAppDispatch();
 
   const fetchProductsAPI = useCallback(() => {

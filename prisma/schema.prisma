@@ -10,7 +10,7 @@ generator client {
 }
 
 model Cart {
-  id              Int      @id @default(autoincrement())
+  id              Int        @id @default(autoincrement())
   userId          Int
   total           Decimal
   discountedTotal Decimal
@@ -18,24 +18,92 @@ model Cart {
   totalQuantity   Int
   hashKey         String
   cartItems       CartItem[]
-  status          String    @default("active")
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  status          String     @default("active")
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
   expiresAt       DateTime
 }
 
 model CartItem {
-  id                Int      @id @default(autoincrement())
-  cartId            Int
-  productId         Int
-  title             String
-  price             Decimal
-  quantity          Int
-  total             Decimal
+  id                 Int      @id @default(autoincrement())
+  cartId             Int
+  productId          Int
+  title              String
+  price              Decimal
+  quantity           Int
+  total              Decimal
   discountPercentage Decimal?
-  discountedTotal   Decimal?
-  thumbnail         String
-  cart              Cart     @relation(fields: [cartId], references: [id])
+  discountedTotal    Decimal?
+  thumbnail          String
+  cart               Cart     @relation(fields: [cartId], references: [id])
 
   @@unique([cartId, productId])
+}
+
+model Product {
+  id                   Int       @id @default(autoincrement())
+  title                String
+  description          String
+  category             String
+  price                Int
+  discountPercentage   Int?
+  rating               Float
+  stock                Int
+  brand                String
+  sku                  String
+  weight               Int
+  dimensions           Dimension @relation(fields: [dimensionId], references: [id])
+  dimensionId          Int
+  warrantyInformation  String
+  shippingInformation  String
+  availabilityStatus   String
+  returnPolicy         String
+  minimumOrderQuantity Int
+  reviews              Review[]
+  meta                 Meta      @relation(fields: [metaId], references: [id])
+  metaId               Int
+  tags                 Tag[]     @relation("ProductTags")
+  thumbnail            String
+  images               Image[] // Relation with Image model
+}
+
+model Tag {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[] @relation("ProductTags")
+}
+
+model Image {
+  id        Int     @id @default(autoincrement())
+  url       String
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+}
+
+model Review {
+  id            Int      @id @default(autoincrement())
+  rating        Int
+  comment       String
+  date          DateTime
+  reviewerName  String
+  reviewerEmail String
+  productId     Int
+  product       Product  @relation(fields: [productId], references: [id])
+}
+
+model Dimension {
+  id      Int       @id @default(autoincrement())
+  width   Decimal
+  height  Decimal
+  depth   Decimal
+  Product Product[]
+}
+
+model Meta {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  barcode   String
+  qrCode    String?
+  Product   Product[]
 }

@@ -52,7 +52,7 @@ const ProductCard = ({
       <Image
         width={300}
         height={300}
-        src={thumbnail}
+        src={`/${thumbnail}l`}
         alt={`${title} thumbnail`}
         className="w-full h-48 object-cover rounded"
         aria-labelledby={`product-image-${id}`}
