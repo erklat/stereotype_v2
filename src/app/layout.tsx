@@ -9,7 +9,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Header from "@/components/Header/Header.component";
 import QueryProvider from "@/utils/query/QueryProvider";
-import { getUser } from "@/utils/AuthManager/actions";
+import { getUser } from "@/utils/AuthManager/AuthManager.actions";
 
 const inter = Inter({ subsets: ["latin"] });
 

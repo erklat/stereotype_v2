@@ -18,6 +18,7 @@ import QuantityControl from "@/components/Cart/QuantityControl/QuantityControl.c
 import { TProduct } from "@/utils/ProductsManager/types";
 import { useGetUserData } from "@/utils/AuthManager/AuthManager.queries";
 import { useQuery } from "@tanstack/react-query";
+import { logout } from "@/utils/AuthManager/AuthManager.actions";
 
 const HeaderActions = () => {
   // const userData = getUser();
@@ -45,7 +46,7 @@ const HeaderActions = () => {
                   Dobrodošli {userData.firstName} {userData.lastName}
                 </span>
                 <Button label="Postavke" />
-                <Button label="Odjava" onClick={() => signOut()} />
+                <Button label="Odjava" onClick={() => logout()} />
               </div>
             </div>
           ) : (

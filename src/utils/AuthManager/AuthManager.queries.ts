@@ -1,4 +1,4 @@
-import { getUser } from "@/utils/AuthManager/actions";
+import { getUser } from "@/utils/AuthManager/AuthManager.actions";
 
 export const useGetUserData = async () => {
   const res = await getUser();
