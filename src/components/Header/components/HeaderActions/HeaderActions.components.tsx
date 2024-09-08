@@ -16,13 +16,23 @@ import Button from "@/components/Button/Button.component";
 import { Prisma } from "@prisma/client";
 import QuantityControl from "@/components/Cart/QuantityControl/QuantityControl.component";
 import { TProduct } from "@/utils/ProductsManager/types";
-import { getUser } from "@/utils/AuthManager/actions";
+import { useGetUserData } from "@/utils/AuthManager/AuthManager.queries";
+import { useQuery } from "@tanstack/react-query";
 
 const HeaderActions = () => {
-  const userData = getUser();
+  // const userData = getUser();
   const cartData = useAppSelector(getCartData);
   const { cartItems = [] } = { ...cartData };
   const productsData = useAppSelector(getProductsData);
+
+  const { data } = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => useGetUserData(),
+  });
+
+  const userData = data;
+
+  console.log("header: ", userData);
 
   return (
     <div className="flex gap-4">
