@@ -26,7 +26,7 @@ const HeaderActions = () => {
   const productsData = useAppSelector(getProductsData);
 
   const { data } = useQuery({
-    queryKey: ["posts"],
+    queryKey: ["user"],
     queryFn: () => useGetUserData(),
   });
 

@@ -1,9 +1,5 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
-import { queryClient } from "@/utils/query/QueryProvider";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import getQueryClient from "@/utils/query/getQueryClient";
 import { useGetUserData } from "./AuthManager.queries";
 
 type Props = {
@@ -11,12 +7,16 @@ type Props = {
 };
 
 export default async function AuthProvider({ children }: Props) {
-  const queryClient = new QueryClient();
+  const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["users"],
+    queryKey: ["user"],
     queryFn: useGetUserData,
   });
 
-  return <HydrationBoundary>{children}</HydrationBoundary>;
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      {children}
+    </HydrationBoundary>
+  );
 }
