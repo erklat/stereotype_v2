@@ -8,14 +8,11 @@ export async function GET(
   res: NextResponse
 ): Promise<NextResponse> {
   try {
-    console.log(db.product);
     const products = await db.product.findMany({
       include: {
         // cartItems: true,
       },
     });
-
-    console.log(products);
 
     const data = products.map((product) => {
       return {
@@ -25,8 +22,6 @@ export async function GET(
         weight: product.weight / 100,
       };
     });
-
-    console.log(data);
 
     return NextResponse.json({ data, meta: {} });
   } catch (error) {

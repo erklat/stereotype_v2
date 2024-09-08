@@ -16,9 +16,10 @@ import Button from "@/components/Button/Button.component";
 import { Prisma } from "@prisma/client";
 import QuantityControl from "@/components/Cart/QuantityControl/QuantityControl.component";
 import { TProduct } from "@/utils/ProductsManager/types";
+import { getUser } from "@/utils/AuthManager/actions";
 
 const HeaderActions = () => {
-  const userData = useAppSelector(getUserData);
+  const userData = getUser();
   const cartData = useAppSelector(getCartData);
   const { cartItems = [] } = { ...cartData };
   const productsData = useAppSelector(getProductsData);

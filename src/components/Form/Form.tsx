@@ -34,11 +34,11 @@ type TFormProps = TFormElementProps & {
   onSubmit: (arg0: any) => void;
 };
 
-const Form: React.FC<TFormProps> = ({ children, onSubmit /*action */ }) => {
+const Form: React.FC<TFormProps> = ({ children, onSubmit, action }) => {
   return (
     <form
       onSubmit={onSubmit}
-      //action={action}
+      action={action}
       className={`
         form
         flex

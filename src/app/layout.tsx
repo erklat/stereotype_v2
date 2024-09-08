@@ -9,6 +9,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Header from "@/components/Header/Header.component";
 import QueryProvider from "@/utils/query/QueryProvider";
+import { getUser } from "@/utils/AuthManager/actions";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
+  const user = await getUser();
+
+  console.log("layout user: ", user);
 
   return (
     <React.StrictMode>
