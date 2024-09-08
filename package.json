@@ -9,6 +9,9 @@
     "lint": "next lint",
     "type-check": "tsc"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
     "@chakra-ui/slider": "^2.1.0",
@@ -50,6 +53,7 @@
     "prisma": "^5.16.2",
     "redux-logger": "^3.0.6",
     "tailwindcss": "^3.4.4",
+    "tsx": "^4.19.0",
     "typescript": "^5"
   }
 }
