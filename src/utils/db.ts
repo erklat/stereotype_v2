@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 
 const prismaClientSingleton = () => {
   return new PrismaClient();
@@ -9,6 +9,8 @@ declare const globalThis: {
 } & typeof global;
 
 const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+
+export { Role };
 
 export default prisma;
 
