@@ -1,10 +1,14 @@
 import { getUser } from "@/utils/AuthManager/AuthManager.actions";
+import queryClient from "@/utils/query/getQueryClient";
+import { useQuery } from "@tanstack/react-query";
 
-export const useGetUserData = async () => {
-  const res = await getUser();
-  const data = await res;
-
-  console.log("useGetUserData, ", data);
-
-  return data;
+export const useGetUserData = () => {
+  const { data, isLoading, error } = useQuery(
+    {
+      queryKey: ["user"],
+      queryFn: getUser,
+    },
+    queryClient
+  );
+  return { data, isLoading, error };
 };

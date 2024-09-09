@@ -31,4 +31,6 @@ const getQueryClient = () => {
   }
 };
 
-export default getQueryClient;
+const queryClient = getQueryClient();
+
+export default queryClient;

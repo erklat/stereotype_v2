@@ -26,12 +26,7 @@ const HeaderActions = () => {
   const { cartItems = [] } = { ...cartData };
   const productsData = useAppSelector(getProductsData);
 
-  const { data } = useQuery({
-    queryKey: ["user"],
-    queryFn: () => useGetUserData(),
-  });
-
-  const userData = data;
+  const { data: userData, isLoading, error } = useGetUserData();
 
   console.log("header: ", userData);
 

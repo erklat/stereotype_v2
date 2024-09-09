@@ -1,17 +1,15 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import getQueryClient from "@/utils/query/getQueryClient";
-import { useGetUserData } from "./AuthManager.queries";
+import queryClient from "@/utils/query/getQueryClient";
+import { getUser } from "./AuthManager.actions";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export default async function AuthProvider({ children }: Props) {
-  const queryClient = getQueryClient();
-
   await queryClient.prefetchQuery({
     queryKey: ["user"],
-    queryFn: useGetUserData,
+    queryFn: getUser,
   });
 
   return (
