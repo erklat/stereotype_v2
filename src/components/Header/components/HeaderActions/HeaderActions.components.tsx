@@ -19,6 +19,7 @@ import { TProduct } from "@/utils/ProductsManager/types";
 import { useGetUserData } from "@/utils/AuthManager/AuthManager.queries";
 import { useQuery } from "@tanstack/react-query";
 import { logout } from "@/utils/AuthManager/AuthManager.actions";
+import { useUserLogout } from "@/utils/AuthManager/AuthManager.queries";
 
 const HeaderActions = () => {
   // const userData = getUser();
@@ -27,6 +28,7 @@ const HeaderActions = () => {
   const productsData = useAppSelector(getProductsData);
 
   const { data: userData, isLoading, error } = useGetUserData();
+  const { mutate: logoutUser } = useUserLogout();
 
   console.log("header: ", userData);
 
@@ -41,7 +43,7 @@ const HeaderActions = () => {
                   Dobrodošli {userData.firstName} {userData.lastName}
                 </span>
                 <Button label="Postavke" />
-                <Button label="Odjava" onClick={() => logout()} />
+                <Button label="Odjava" onClick={() => logoutUser()} />
               </div>
             </div>
           ) : (
@@ -61,7 +63,7 @@ const HeaderActions = () => {
                   <Image
                     width={40}
                     height={40}
-                    src={item.thumbnail}
+                    src={"/item.thumbnail"}
                     alt={`${item.title} image`}
                   />
                 </div>

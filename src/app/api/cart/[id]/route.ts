@@ -22,7 +22,9 @@ export async function GET(
     const cookie = await getCookie("cart_data");
     const { userId, hashKey } = cookie;
 
-    if (!userId || !hashKey) {
+    console.log(hashKey);
+
+    if (!hashKey) {
       return NextResponse.json(
         { error: "Missing userId or hashKey" },
         { status: 400 }
@@ -64,14 +66,14 @@ export async function GET(
     // Prepare response
     const response = {
       ...activeCart,
-      total: activeCart.total.toNumber(),
-      discountedTotal: activeCart.discountedTotal.toNumber(),
+      total: activeCart.total,
+      discountedTotal: activeCart.discountedTotal,
       cartItems: activeCart.cartItems.map((item) => ({
         ...item,
-        price: item.price.toNumber(),
-        total: item.total.toNumber(),
-        discountedTotal: item?.discountedTotal?.toNumber() || 0,
-        discountPercentage: item?.discountPercentage?.toNumber() || 0,
+        price: item.price,
+        total: item.total,
+        discountedTotal: item?.discountedTotal || 0,
+        discountPercentage: item?.discountPercentage || 0,
       })),
     };
 

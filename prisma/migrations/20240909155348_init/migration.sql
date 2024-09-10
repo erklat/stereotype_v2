@@ -1,9 +1,9 @@
 -- CreateTable
 CREATE TABLE `Cart` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `userId` INTEGER NOT NULL,
-    `total` DECIMAL(65, 30) NOT NULL,
-    `discountedTotal` DECIMAL(65, 30) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `total` INTEGER NOT NULL,
+    `discountedTotal` INTEGER NOT NULL,
     `totalProducts` INTEGER NOT NULL,
     `totalQuantity` INTEGER NOT NULL,
     `hashKey` VARCHAR(191) NOT NULL,
@@ -21,11 +21,11 @@ CREATE TABLE `CartItem` (
     `cartId` INTEGER NOT NULL,
     `productId` INTEGER NOT NULL,
     `title` VARCHAR(191) NOT NULL,
-    `price` DECIMAL(65, 30) NOT NULL,
+    `price` INTEGER NOT NULL,
     `quantity` INTEGER NOT NULL,
-    `total` DECIMAL(65, 30) NOT NULL,
-    `discountPercentage` DECIMAL(65, 30) NULL,
-    `discountedTotal` DECIMAL(65, 30) NULL,
+    `total` INTEGER NOT NULL,
+    `discountPercentage` INTEGER NULL,
+    `discountedTotal` INTEGER NULL,
     `thumbnail` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `CartItem_cartId_productId_key`(`cartId`, `productId`),

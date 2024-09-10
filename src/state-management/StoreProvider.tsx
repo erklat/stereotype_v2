@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { makeStore, AppStore } from "@/state-management/store";
 import { actions as authActions } from "@/utils/AuthManager/AuthManager.reducer";
 import { Session } from "next-auth";
+import { useGetUserData } from "@/utils/AuthManager/AuthManager.queries";
 
 export default function StoreProvider({
   children,
@@ -13,6 +14,9 @@ export default function StoreProvider({
   session: Session | null;
 }) {
   const storeRef = useRef<AppStore>();
+  const { data: userData, isLoading, error } = useGetUserData();
+
+  console.log("STATE", userData);
 
   if (!storeRef.current) {
     // Create the store instance the first time this renders

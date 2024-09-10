@@ -7,6 +7,7 @@ import { createHash } from "crypto";
 
 import { lucia } from "@/utils/AuthManager/auth";
 import db from "@/utils/db";
+import { storeUserData } from "@/utils/AuthManager/AuthManager.queries";
 
 type LoginRequestErrors = {};
 
@@ -35,8 +36,6 @@ export async function login(_prevState, formData: FormData) {
     },
   });
 
-  console.log(user);
-
   if (!user) {
     return {
       errors: {
@@ -61,6 +60,8 @@ export async function login(_prevState, formData: FormData) {
   // if (user.role === "ADMIN") {
   //   redirect("/admin");
   // }
+
+  storeUserData(user);
 
   redirect("/");
 }
