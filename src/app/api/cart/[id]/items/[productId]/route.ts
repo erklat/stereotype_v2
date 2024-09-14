@@ -1,11 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import {
   parseCartDataToResponse,
   calculateDiscountedPrice,
 } from "@/utils/CartManager/utils";
-
-const prisma = new PrismaClient();
+import db from "@/utils/db";
 
 export async function PATCH(
   req: NextRequest,
@@ -14,16 +12,13 @@ export async function PATCH(
   try {
     const payload = await req.json();
     const { id: cartId, productId } = params;
-    const { hashKey, quantity } = payload;
+    const { quantity } = payload;
 
-    const existingCart = await prisma.cart.findUnique({
+    const existingCart = await db.cart.findUnique({
       where: {
         id: Number(cartId),
-        hashKey,
+        secret,
         status: "active",
-        expiresAt: {
-          gt: new Date(),
-        },
       },
       include: {
         cartItems: true,
@@ -105,6 +100,6 @@ export async function PATCH(
       { status: 500 }
     );
   } finally {
-    await prisma.$disconnect(); // Disconnect Prisma client
+    await db.$disconnect(); // Disconnect Prisma client
   }
 }

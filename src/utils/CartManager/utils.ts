@@ -50,13 +50,13 @@ export const parseCartDataToResponse = (
     discountedTotal: getDiscountedTotal(products),
     cartItems: products.map((product: Prisma.CartItemGetPayload<{}>) => ({
       ...product,
-      price: currency(product.price.toNumber()),
-      total: currency(product.total.toNumber() * product.quantity),
+      price: currency(product.price),
+      total: currency(product.total * product.quantity),
       discountedTotal: currency(
-        product?.discountedTotal?.toNumber() || 0 * product.quantity
+        product?.discountedTotal || 0 * product.quantity
       ),
       discountPercentage: product.discountPercentage
-        ? currency(product.discountPercentage?.toNumber())
+        ? currency(product.discountPercentage)
         : 0,
     })),
   };

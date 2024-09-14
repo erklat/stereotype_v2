@@ -4,15 +4,66 @@ import crypto from "crypto";
 import currency from "currency.js";
 import Decimal from "decimal.js";
 import { cookies } from "next/headers";
+import db from "@/utils/db";
+import { notFound } from "next/navigation";
 
-const prisma = new PrismaClient();
+const setCartCookie = (cartId, secret) => {
+  const responseCookies = cookies();
+  return responseCookies.set(
+    "cart_data",
+    JSON.stringify({
+      cartId,
+      secret,
+    }),
+    {
+      httpOnly: true,
+      path: "/",
+    }
+  );
+};
+
+const getCartTotals = (cartProducts, dbProducts) => {
+  const total = cartProducts.reduce((acc, product) => {
+    const { price } = dbProducts.find(
+      (dbProduct) => dbProduct.id === product.id
+    );
+    return acc + price;
+  }, 0);
+
+  const discountedTotal = cartProducts.reduce((acc, product) => {
+    const { price, discountPercentage } = dbProducts.find(
+      (dbProduct) => dbProduct.id === product.id
+    );
+
+    return acc + calculateDiscountedPrice(price, discountPercentage);
+  }, 0);
+
+  const totalQuantity = cartProducts.reduce((acc, product) => {
+    return acc + product.quantity;
+  }, 0);
+
+  return { total, discountedTotal, totalQuantity };
+};
 
 function calculateDiscountedPrice(
   price: number,
   discountPercentage: number
 ): number {
-  const discountAmount = (discountPercentage / 100) * price;
+  const percent = discountPercentage / 100;
+  const discountAmount = (percent / 100 / 100) * price;
   return price - discountAmount;
+}
+
+export async function GET(
+  req: NextRequest,
+  res: NextResponse
+): Promise<NextResponse> {
+  try {
+    return NextResponse.json({ data: {}, meta: {} }, { status: 200 });
+  } catch (error) {
+  } finally {
+    db.$disconnect();
+  }
 }
 
 export async function POST(
@@ -20,109 +71,95 @@ export async function POST(
   res: NextResponse
 ): Promise<NextResponse> {
   try {
-    const payload = await req.json();
+    const { products: cartProducts } = await req.json();
+    const userId = null;
 
-    const { userId, products } = payload;
-    const hashKey = crypto.randomBytes(20).toString("hex");
+    const dbProducts = await db.product.findMany({
+      where: {
+        id: {
+          in: cartProducts.map((product) => product.id),
+        },
+      },
+    });
 
-    // Calculate totals for the entire cart
-    const total = products.reduce(
-      (acc: number, product: any) => acc + product.price * product.quantity,
-      0
-    );
-    const discountedTotal = products.reduce(
-      (acc: number, product: any) =>
-        acc +
-        calculateDiscountedPrice(product.price, product.discountPercentage) *
-          product.quantity,
-      0
-    );
-    const totalQuantity = products.reduce(
-      (acc: number, product: any) => acc + product.quantity,
-      0
+    const { total, discountedTotal, totalQuantity } = getCartTotals(
+      cartProducts,
+      dbProducts
     );
 
-    // Create the cart
-    const cart = await prisma.cart.create({
+    const cart = await db.cart.create({
       data: {
-        userId: userId || null,
-        total: total * 100,
-        discountedTotal: discountedTotal * 100,
-        totalProducts: products.length,
+        total,
+        discountedTotal,
         totalQuantity,
-        hashKey,
+        totalProducts: cartProducts.length,
+        userId: userId || null,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
     });
 
-    // Map products to cart items
-    const cartItems = products.map((product: any) => ({
-      cartId: cart.id,
-      productId: product.id,
-      title: product.title,
-      price: product.price * 100,
-      quantity: product.quantity,
-      total: product.price * 100 * product.quantity,
-      discountPercentage: product.discountPercentage * 100,
-      discountedTotal:
-        calculateDiscountedPrice(product.price, product.discountPercentage) *
-        product.quantity,
-      thumbnail: product.thumbnail,
-    }));
+    const cartItems = dbProducts.map((dbProduct) => {
+      const quantity = cartProducts.find(
+        (product) => product.id === dbProduct.id
+      ).quantity;
+      const discountedTotal = calculateDiscountedPrice(
+        dbProduct.price,
+        dbProduct.discountPercentage
+      );
 
-    await prisma.cartItem.createMany({
-      data: cartItems,
-    });
-
-    // Fetch the complete cart with cart items
-    const cartData = await prisma.cart.findUnique({
-      where: { id: cart.id },
-      include: { cartItems: true },
-    });
-
-    if (!cartData) throw new Error("Error retrieving cart from DB.");
-
-    console.log(cartData);
-
-    const response = {
-      ...cartData,
-      total: currency(cartData.total),
-      discountedTotal: currency(cartData.discountedTotal),
-      cartItems: cartData?.cartItems.map((item) => ({
-        ...item,
-        price: currency(item.price),
-        total: currency(item.total),
-        discountedTotal: item.discountedTotal
-          ? currency(item.discountedTotal)
-          : 0,
-        discountPercentage: item.discountPercentage
-          ? currency(item.discountPercentage)
-          : 0,
-      })),
-    };
-
-    // Set cookies
-    const responseCookies = cookies();
-    responseCookies.set(
-      "cart_data",
-      JSON.stringify({
+      return {
         cartId: cart.id,
-        userId,
-        hashKey,
-      }),
-      {
-        httpOnly: true,
-        path: "/",
-      }
-    );
+        productId: dbProduct.id,
+        title: dbProduct.title,
+        price: dbProduct.price,
+        quantity,
+        total: dbProduct.price * quantity,
+        discountPercentage: dbProduct.discountPercentage,
+        discountedTotal,
+        thumbnail: dbProduct.thumbnail,
+      };
+    });
 
-    return NextResponse.json({ data: response });
+    await db.cartItem.createMany({ data: cartItems });
+
+    const cartData = await db.cart.findUnique({
+      where: { id: cart.id },
+      include: {
+        cartItems: true,
+      },
+    });
+
+    if (!cartData) {
+      return notFound();
+    }
+
+    setCartCookie(cart.id, cartData.secret);
+
+    return NextResponse.json({ data: cartData, meta: {} }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : String(error) },
       { status: 405 }
     );
   } finally {
-    await prisma.$disconnect(); // Disconnect Prisma client
+    await db.$disconnect(); // Disconnect Prisma client
+  }
+}
+
+export async function PATCH() {
+  try {
+    return NextResponse.json({ data: {}, meta: {} }, { status: 200 });
+  } catch (error) {
+  } finally {
+    await db.$disconnect();
+  }
+}
+
+export async function DELETE() {
+  try {
+    return NextResponse.json({ data: {}, meta: {} }, { status: 200 });
+  } catch (error) {
+  } finally {
+    await db.$disconnect;
   }
 }

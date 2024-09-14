@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { NextResponse, NextRequest } from "next/server";
 import db from "@/utils/db";
 
@@ -14,7 +15,7 @@ export async function GET(
       },
     });
 
-    const data = products.map((product) => {
+    const data = products.map((product: Prisma.ProductGetPayload<{}>) => {
       return {
         ...product,
         price: product.price / 100,
@@ -23,7 +24,7 @@ export async function GET(
       };
     });
 
-    return NextResponse.json({ data, meta: {} });
+    return NextResponse.json({ data, meta: {} }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

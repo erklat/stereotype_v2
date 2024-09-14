@@ -15,3 +15,9 @@ export const getCookie = async (key: string) => {
 export const deleteCookie = async (name: string) => {
   cookies().delete(name);
 };
+
+export const getCookieValue = (cookie: string | null, key: string) =>
+  cookie
+    ?.split("; ")
+    ?.find((c: string) => c.startsWith(`${key}=`))
+    ?.split("=")[1] ?? null;
