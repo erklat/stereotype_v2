@@ -1,116 +1,84 @@
-// @ts-nocheck
-
 "use client";
-import { useTransition } from "react";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
 
-import { Container } from "@/components/Layout/Layout.component";
-import Form, { FormRow, FormColumn } from "@/components/Form/Form";
-import Text from "@/components/Form/components/Text/Text";
-import Button from "@/components/Button/Button.component";
-import { login as loginAction } from "@/utils/AuthManager/actions";
-import { schema as loginValidationSchema } from "@/utils/AuthManager/validators";
-import { yupResolver } from "@hookform/resolvers/yup";
-import TLoginData from "@/utils/AuthManager/types";
-import { signIn } from "next-auth/react";
-import { useAppDispatch } from "@/state-management/hooks";
-import { actions as authActions } from "@/utils/AuthManager/AuthManager.reducer";
+import Image from "next/image";
+import Link from "next/link";
+import { useFormState, useFormStatus } from "react-dom";
+import Form from "@/components/Form/Form";
 
-type TFormValues = {
-  [key: string]: string;
-};
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-const Login: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const [isPending, startTransition] = useTransition();
-  const {
-    handleSubmit,
-    control,
-    formState: { isValid, isDirty },
-    getFieldState,
-  } = useForm({
-    mode: "onChange",
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-    resolver: yupResolver(loginValidationSchema),
-  });
+import { login } from "@/utils/AuthManager/AuthManager.actions";
 
-  const onSubmitAPI = (formData) => {
-    return new Promise((resolve, reject) => {
-      dispatch({
-        type: authActions.START_USER_LOGIN,
-        promise: { resolve, reject },
-        payload: {
-          formData,
-        },
-      });
-    });
-  };
+export const description =
+  "A login page with two columns. The first column has the login form with email and password. There's a Forgot your passwork link and a link to sign up if you do not have an account. The second column has a cover image.";
 
-  const onSubmit: SubmitHandler<TFormValues> = (formData) => {
-    onSubmitAPI(formData)
-      .then(() => {})
-      .catch(() => {});
-  };
+const Page = () => {
+  const [state, formAction] = useFormState(login, null);
+  const { pending } = useFormStatus();
 
   return (
-    <div className={``}>
-      <Container>
-        <div
-          className={`
-            min-h-screen 
-            flex 
-            justify-center 
-            items-center
-        `}
-        >
-          <div
-            className={`
-            max-w-96
-            bg-white
-            p-24
-        `}
-          >
-            <Form onSubmit={handleSubmit((data) => onSubmit(data))}>
-              <FormRow>
-                <Controller
-                  name="username"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Text
-                      label="Username"
-                      getFieldState={getFieldState}
-                      {...field}
-                    />
-                  )}
+    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+      <div className="flex items-center justify-center py-12">
+        <div className="mx-auto grid w-[350px] gap-6">
+          <div className="grid gap-2 text-center">
+            <h1 className="text-3xl font-bold">Login</h1>
+            <p className="text-balance text-muted-foreground">
+              Enter your email below to login to your account
+            </p>
+          </div>
+          <div className="grid gap-4">
+            <Form action={formAction}>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  name="email"
+                  placeholder="m@example.com"
+                  required
                 />
-              </FormRow>
-              <FormRow>
-                <Controller
-                  name="password"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Text
-                      label="Password"
-                      getFieldState={getFieldState}
-                      {...field}
-                    />
-                  )}
-                />
-              </FormRow>
-              <FormRow>
-                <Button label="Submit" disabled={!isValid} submit full />
-              </FormRow>
+              </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                  <Link
+                    href="/forgot-password"
+                    className="ml-auto inline-block text-sm underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
+                <Input id="password" type="password" name="password" required />
+              </div>
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+              <Button variant="outline" className="w-full">
+                Login with Google
+              </Button>
             </Form>
           </div>
+          <div className="mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="#" className="underline">
+              Sign up
+            </Link>
+          </div>
         </div>
-      </Container>
+      </div>
+      <div className="hidden bg-muted lg:block">
+        <Image
+          src="/placeholder.svg"
+          alt="Image"
+          width="1920"
+          height="1080"
+          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+      </div>
     </div>
   );
 };
 
-export default Login;
+export default Page;

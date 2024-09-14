@@ -22,26 +22,6 @@ const ProductCard = ({
     ? (price - (price * discount) / 100).toFixed(2)
     : price.toFixed(2);
 
-  const addToCartAPI = (product: TProduct) => {
-    return new Promise((resolve, reject) => {
-      dispatch({
-        type: cartActions.START_ADD_PRODUCT,
-        promise: { resolve, reject },
-        payload: {
-          userId: 1,
-          // TODO: leave as an array in case of bulk add
-          products: [{ ...product, quantity: 1 }],
-        },
-      });
-    });
-  };
-
-  const addToCart = (product: TProduct) => {
-    addToCartAPI(product)
-      .then(() => {})
-      .catch(() => {});
-  };
-
   return (
     <div
       id={id.toString()}

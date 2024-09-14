@@ -3,8 +3,10 @@ import { getCartData } from "@/utils/CartManager/CartManager.selectors";
 import { actions as cartActions } from "@/utils/CartManager/CartManager.reducer";
 import { Prisma } from "@prisma/client";
 import { TProduct } from "@/utils/ProductsManager/types";
+import { useGetUserData } from "@/utils/AuthManager/AuthManager.queries";
 
 const QuantityControl = ({ product }: { product: TProduct }) => {
+  console.log(product);
   const dispatch = useAppDispatch();
   const cartData = useAppSelector(getCartData);
   const { id: cartId = null } = { ...cartData };
@@ -14,6 +16,8 @@ const QuantityControl = ({ product }: { product: TProduct }) => {
   const { productId = null, quantity: currentQuantity = 0 } = {
     ...productInCart,
   };
+  const { data: userData } = useGetUserData();
+  const { id: userId } = { ...userData };
 
   const addToCartAPI = (product: TProduct) => {
     return new Promise((resolve, reject) => {
@@ -21,7 +25,7 @@ const QuantityControl = ({ product }: { product: TProduct }) => {
         type: cartActions.START_ADD_PRODUCT,
         promise: { resolve, reject },
         payload: {
-          userId: 1,
+          userId,
           // TODO: leave as an array in case of bulk add
           products: [{ ...product, quantity: 1 }],
         },

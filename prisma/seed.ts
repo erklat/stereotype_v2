@@ -1,6 +1,32 @@
-import db from "@/utils/db";
+import db, { Role } from "@/utils/db";
 
-async function main() {
+const upsertUserData = async () => {
+  await db.user.upsert({
+    where: { email: "superadmin@dev.com" },
+    update: {},
+    create: {
+      email: "superadmin@dev.com",
+      name: "Super Admin",
+      role: Role.SUPERADMIN,
+      password: "5f4dcc3b5aa765d61d8327deb882cf99", // password
+      active: true,
+    },
+  });
+
+  await db.user.upsert({
+    where: { email: "user@dev.com" },
+    update: {},
+    create: {
+      email: "user@dev.com",
+      name: "User",
+      role: Role.USER,
+      password: "5f4dcc3b5aa765d61d8327deb882cf99", // password
+      active: true,
+    },
+  });
+};
+
+const upsertProductData = async () => {
   await db.product.create({
     data: {
       title: "Essence Mascara Lash Princess",
@@ -73,6 +99,11 @@ async function main() {
       thumbnail: "thumbnail.jpg",
     },
   });
+};
+
+async function main() {
+  await upsertUserData();
+  await upsertProductData();
 }
 
 main()

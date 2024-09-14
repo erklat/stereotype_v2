@@ -45,9 +45,9 @@ export async function POST(
     // Create the cart
     const cart = await prisma.cart.create({
       data: {
-        userId,
-        total,
-        discountedTotal,
+        userId: userId || null,
+        total: total * 100,
+        discountedTotal: discountedTotal * 100,
         totalProducts: products.length,
         totalQuantity,
         hashKey,
@@ -60,10 +60,10 @@ export async function POST(
       cartId: cart.id,
       productId: product.id,
       title: product.title,
-      price: product.price,
+      price: product.price * 100,
       quantity: product.quantity,
-      total: product.price * product.quantity,
-      discountPercentage: product.discountPercentage,
+      total: product.price * 100 * product.quantity,
+      discountPercentage: product.discountPercentage * 100,
       discountedTotal:
         calculateDiscountedPrice(product.price, product.discountPercentage) *
         product.quantity,
@@ -82,19 +82,21 @@ export async function POST(
 
     if (!cartData) throw new Error("Error retrieving cart from DB.");
 
+    console.log(cartData);
+
     const response = {
       ...cartData,
-      total: currency(cartData.total.toNumber()),
-      discountedTotal: currency(cartData.discountedTotal.toNumber()),
+      total: currency(cartData.total),
+      discountedTotal: currency(cartData.discountedTotal),
       cartItems: cartData?.cartItems.map((item) => ({
         ...item,
-        price: currency(item.price.toNumber()),
-        total: currency(item.total.toNumber()),
+        price: currency(item.price),
+        total: currency(item.total),
         discountedTotal: item.discountedTotal
-          ? currency(item.discountedTotal.toNumber())
+          ? currency(item.discountedTotal)
           : 0,
         discountPercentage: item.discountPercentage
-          ? currency(item.discountPercentage.toNumber())
+          ? currency(item.discountPercentage)
           : 0,
       })),
     };
