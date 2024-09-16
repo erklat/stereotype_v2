@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import crypto from "crypto";
-import currency from "currency.js";
-import Decimal from "decimal.js";
 import { cookies } from "next/headers";
 import db from "@/utils/db";
 import { notFound } from "next/navigation";
+import {
+  calculateDiscountedPrice,
+  getCartTotals,
+} from "@/utils/CartManager/utils";
 
 const setCartCookie = (cartId, secret) => {
   const responseCookies = cookies();
@@ -21,38 +21,6 @@ const setCartCookie = (cartId, secret) => {
     }
   );
 };
-
-const getCartTotals = (cartProducts, dbProducts) => {
-  const total = cartProducts.reduce((acc, product) => {
-    const { price } = dbProducts.find(
-      (dbProduct) => dbProduct.id === product.id
-    );
-    return acc + price;
-  }, 0);
-
-  const discountedTotal = cartProducts.reduce((acc, product) => {
-    const { price, discountPercentage } = dbProducts.find(
-      (dbProduct) => dbProduct.id === product.id
-    );
-
-    return acc + calculateDiscountedPrice(price, discountPercentage);
-  }, 0);
-
-  const totalQuantity = cartProducts.reduce((acc, product) => {
-    return acc + product.quantity;
-  }, 0);
-
-  return { total, discountedTotal, totalQuantity };
-};
-
-function calculateDiscountedPrice(
-  price: number,
-  discountPercentage: number
-): number {
-  const percent = discountPercentage / 100;
-  const discountAmount = (percent / 100 / 100) * price;
-  return price - discountAmount;
-}
 
 export async function GET(
   req: NextRequest,
@@ -82,16 +50,16 @@ export async function POST(
       },
     });
 
-    const { total, discountedTotal, totalQuantity } = getCartTotals(
-      cartProducts,
-      dbProducts
+    const cartTotals = await getCartTotals(
+      cartProducts.map((product) => ({
+        id: product.id,
+        quantity: product.quantity,
+      }))
     );
 
     const cart = await db.cart.create({
       data: {
-        total,
-        discountedTotal,
-        totalQuantity,
+        ...cartTotals,
         totalProducts: cartProducts.length,
         userId: userId || null,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -102,10 +70,6 @@ export async function POST(
       const quantity = cartProducts.find(
         (product) => product.id === dbProduct.id
       ).quantity;
-      const discountedTotal = calculateDiscountedPrice(
-        dbProduct.price,
-        dbProduct.discountPercentage
-      );
 
       return {
         cartId: cart.id,
@@ -115,7 +79,11 @@ export async function POST(
         quantity,
         total: dbProduct.price * quantity,
         discountPercentage: dbProduct.discountPercentage,
-        discountedTotal,
+        discountedTotal:
+          calculateDiscountedPrice(
+            dbProduct.price,
+            dbProduct.discountPercentage
+          ) * quantity,
         thumbnail: dbProduct.thumbnail,
       };
     });

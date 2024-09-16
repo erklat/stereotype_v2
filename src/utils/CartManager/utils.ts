@@ -1,16 +1,16 @@
 import currency from "currency.js";
 import { Prisma } from "@prisma/client";
 import { TCartData } from "@/utils/CartManager/types";
+import db from "@/utils/db";
 
-export const calculateDiscountedPrice = (
+export function calculateDiscountedPrice(
   price: number,
-  discountPercentage?: number
-): number => {
-  const discountAmount = discountPercentage
-    ? (discountPercentage / 100) * price
-    : price;
+  discountPercentage: number
+): number {
+  const percent = discountPercentage / 100;
+  const discountAmount = (percent / 100) * price;
   return price - discountAmount;
-};
+}
 
 export const getCartTotal = (products: Prisma.CartItemGetPayload<{}>[]) => {
   const result = products.reduce(
@@ -21,43 +21,48 @@ export const getCartTotal = (products: Prisma.CartItemGetPayload<{}>[]) => {
   return currency(result);
 };
 
-export const getDiscountedTotal = (
-  products: Prisma.CartItemGetPayload<{}>[]
-) => {
-  const result = products.reduce(
-    (acc: number, product: any) =>
-      acc +
-      calculateDiscountedPrice(product.price, product.discountPercentage) *
-        product.quantity,
-    0
-  );
-
-  return currency(result);
+export const validateCartItemQuantity = (cartItem, quantity) => {
+  // const productId = await db.findUnique(cart)
+  // const
 };
 
-export const parseCartDataToResponse = (
-  cartData: Prisma.CartGetPayload<{
-    include: {
-      cartItems: true;
-    };
-  }> | null
-) => {
-  const products = cartData?.cartItems || [];
+export const getCartTotals = async (cartProducts) => {
+  const dbProducts = await db.product.findMany({
+    where: {
+      id: {
+        in: cartProducts.map((product) => product.productId),
+      },
+    },
+  });
 
-  return {
-    ...cartData,
-    total: getCartTotal(products),
-    discountedTotal: getDiscountedTotal(products),
-    cartItems: products.map((product: Prisma.CartItemGetPayload<{}>) => ({
-      ...product,
-      price: currency(product.price),
-      total: currency(product.total * product.quantity),
-      discountedTotal: currency(
-        product?.discountedTotal || 0 * product.quantity
-      ),
-      discountPercentage: product.discountPercentage
-        ? currency(product.discountPercentage)
-        : 0,
-    })),
-  };
+  console.log(">>>>>>>");
+  console.log(cartProducts);
+  console.log("++++++");
+  console.log(dbProducts);
+
+  const total = cartProducts.reduce((acc, product) => {
+    const { price } = dbProducts.find(
+      (dbProduct) => dbProduct.id === product.productId
+    );
+    return acc + price * product.quantity;
+  }, 0);
+
+  const discountedTotal = cartProducts.reduce((acc, product) => {
+    const { price, discountPercentage } = dbProducts.find(
+      (dbProduct) => dbProduct.id === product.productId
+    );
+
+    return (
+      acc +
+      calculateDiscountedPrice(price, discountPercentage) * product.quantity
+    );
+  }, 0);
+
+  const totalQuantity = cartProducts.reduce((acc, product) => {
+    return acc + product.quantity;
+  }, 0);
+
+  console.log({ total, discountedTotal, totalQuantity });
+
+  return { total, discountedTotal, totalQuantity };
 };
