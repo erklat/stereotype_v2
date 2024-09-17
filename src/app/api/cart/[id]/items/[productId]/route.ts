@@ -6,6 +6,7 @@ import {
 import db from "@/utils/db";
 import { getCookieValue, getCookie } from "@/utils/cookie";
 import { Prisma } from "@prisma/client";
+import { TCartItemPayload } from "@/utils/CartManager/types";
 
 export async function PATCH(
   req: NextRequest,
@@ -68,7 +69,7 @@ export async function PATCH(
         discountedTotal:
           calculateDiscountedPrice(
             existingCartItem.price,
-            existingCartItem?.discountPercentage
+            existingCartItem.discountPercentage
           ) * quantity,
       },
     });
@@ -113,7 +114,7 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  req,
+  req: NextRequest,
   { params }: { params: { id: string; productId: string } }
 ): Promise<NextResponse> {
   try {

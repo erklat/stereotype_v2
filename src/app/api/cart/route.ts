@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { NextResponse, NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import db from "@/utils/db";
@@ -6,8 +7,9 @@ import {
   calculateDiscountedPrice,
   getCartTotals,
 } from "@/utils/CartManager/utils";
+import { TCartItemPayload } from "@/utils/CartManager/types";
 
-const setCartCookie = (cartId, secret) => {
+const setCartCookie = (cartId: number, secret: string) => {
   const responseCookies = cookies();
   return responseCookies.set(
     "cart_data",
@@ -22,13 +24,14 @@ const setCartCookie = (cartId, secret) => {
   );
 };
 
-export async function GET(
-  req: NextRequest,
-  res: NextResponse
-): Promise<NextResponse> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     return NextResponse.json({ data: {}, meta: {} }, { status: 200 });
   } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 405 }
+    );
   } finally {
     db.$disconnect();
   }
@@ -45,13 +48,15 @@ export async function POST(
     const dbProducts = await db.product.findMany({
       where: {
         id: {
-          in: cartProducts.map((product) => product.id),
+          in: cartProducts.map(
+            (product: Prisma.ProductGetPayload<{}>) => product.id
+          ),
         },
       },
     });
 
     const cartTotals = await getCartTotals(
-      cartProducts.map((product) => ({
+      cartProducts.map((product: TCartItemPayload) => ({
         id: product.id,
         quantity: product.quantity,
       }))
@@ -68,7 +73,7 @@ export async function POST(
 
     const cartItems = dbProducts.map((dbProduct) => {
       const quantity = cartProducts.find(
-        (product) => product.id === dbProduct.id
+        (product: TCartItemPayload) => product.id === dbProduct.id
       ).quantity;
 
       return {

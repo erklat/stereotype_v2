@@ -1,26 +1,27 @@
+import { Prisma } from "@prisma/client";
 import {
   calculateDiscountedPrice,
   getCartTotals,
 } from "@/utils/CartManager/utils";
 import db from "@/utils/db";
 import { NextResponse, NextRequest } from "next/server";
+import { TParams } from "@/app/api/types";
+import { TCartItemPayload } from "@/utils/CartManager/types";
 
 export async function POST(
   req: NextRequest,
-  { params }
+  { params }: TParams
 ): Promise<NextResponse> {
   try {
-    console.log(params);
     const { id: cartId } = params;
-
     const { products: cartProducts } = await req.json();
-
-    console.log(cartId);
 
     const dbProducts = await db.product.findMany({
       where: {
         id: {
-          in: cartProducts.map((product) => product.id),
+          in: cartProducts.map(
+            (product: Prisma.ProductGetPayload<{}>) => product.id
+          ),
         },
       },
     });
@@ -28,7 +29,7 @@ export async function POST(
     await Promise.all(
       dbProducts.map(async (product) => {
         const quantity = cartProducts.find(
-          (cartProduct) => cartProduct.id === product.id
+          (cartProduct: TCartItemPayload) => cartProduct.id === product.id
         ).quantity;
         await db.cartItem.upsert({
           where: {
@@ -88,8 +89,6 @@ export async function POST(
         },
       },
     });
-
-    console.log("updatedCart", updatedCart);
 
     return NextResponse.json({ data: updatedCart, meta: {} }, { status: 200 });
   } catch (error) {
