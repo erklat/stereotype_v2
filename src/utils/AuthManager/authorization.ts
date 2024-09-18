@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { validateRequest } from "@/utils/AuthManager/auth";
 import { User } from "lucia";
-import { Role } from "@/utils/db";
+import { Role } from "@/db/db";
 
 export async function onlySuperadmin(): Promise<User | never> {
   const { user } = await validateRequest();

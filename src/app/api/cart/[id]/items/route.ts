@@ -2,8 +2,9 @@ import { Prisma } from "@prisma/client";
 import {
   calculateDiscountedPrice,
   getCartTotals,
+  insertCartItemPayload,
 } from "@/utils/CartManager/utils";
-import db from "@/utils/db";
+import db from "@/db/db";
 import { NextResponse, NextRequest } from "next/server";
 import { TParams } from "@/app/api/types";
 import { TCartItemPayload } from "@/utils/CartManager/types";
@@ -27,40 +28,32 @@ export async function POST(
     });
 
     await Promise.all(
-      dbProducts.map(async (product) => {
+      dbProducts.map(async (dbProduct) => {
         const quantity = cartProducts.find(
-          (cartProduct: TCartItemPayload) => cartProduct.id === product.id
+          (cartProduct: TCartItemPayload) => cartProduct.id === dbProduct.id
         ).quantity;
         await db.cartItem.upsert({
           where: {
             cartId_productId: {
               cartId: Number(cartId),
-              productId: product.id,
+              productId: dbProduct.id,
             },
           },
           update: {
             quantity,
-            total: product.price * quantity,
+            total: dbProduct.price * quantity,
             discountedTotal:
               calculateDiscountedPrice(
-                product.price,
-                product.discountPercentage
+                dbProduct.price,
+                dbProduct.discountPercentage
               ) * quantity,
           },
           create: {
-            cartId: Number(cartId),
-            productId: product.id,
-            title: product.title,
-            price: product.price,
-            quantity,
-            total: product.price * quantity,
-            discountPercentage: product.discountPercentage,
-            discountedTotal:
-              calculateDiscountedPrice(
-                product.price,
-                product.discountPercentage
-              ) * quantity,
-            thumbnail: product.thumbnail,
+            ...insertCartItemPayload({
+              items: cartProducts,
+              dbProduct,
+              cartId: Number(cartId),
+            }),
           },
         });
       })

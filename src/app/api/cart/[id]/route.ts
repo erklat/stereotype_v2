@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { notFound } from "next/navigation";
 import { getCookie, getCookieValue } from "@/utils/cookie";
-import db from "@/utils/db";
+import db from "@/db/db";
 
 export async function GET(
   req: NextRequest,

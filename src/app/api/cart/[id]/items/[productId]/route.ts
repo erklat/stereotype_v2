@@ -3,7 +3,7 @@ import {
   calculateDiscountedPrice,
   getCartTotals,
 } from "@/utils/CartManager/utils";
-import db from "@/utils/db";
+import db from "@/db/db";
 import { getCookieValue, getCookie } from "@/utils/cookie";
 import { Prisma } from "@prisma/client";
 import { TCartItemPayload } from "@/utils/CartManager/types";

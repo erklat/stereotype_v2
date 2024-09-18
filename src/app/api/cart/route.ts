@@ -1,28 +1,19 @@
 import { Prisma } from "@prisma/client";
 import { NextResponse, NextRequest } from "next/server";
 import { cookies } from "next/headers";
-import db from "@/utils/db";
+import db from "@/db/db";
 import { notFound } from "next/navigation";
 import {
   calculateDiscountedPrice,
   getCartTotals,
+  insertCartItemPayload,
 } from "@/utils/CartManager/utils";
 import { TCartItemPayload } from "@/utils/CartManager/types";
-
-const setCartCookie = (cartId: number, secret: string) => {
-  const responseCookies = cookies();
-  return responseCookies.set(
-    "cart_data",
-    JSON.stringify({
-      cartId,
-      secret,
-    }),
-    {
-      httpOnly: true,
-      path: "/",
-    }
-  );
-};
+import {
+  createCart,
+  createCartItems,
+  retreiveProducts,
+} from "@/utils/CartManager/CartManager.db";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
@@ -37,76 +28,17 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 }
 
-export async function POST(
-  req: NextRequest,
-  res: NextResponse
-): Promise<NextResponse> {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const { products: cartProducts } = await req.json();
-    const userId = null;
+    const { products: productsPayload } = await req.json();
 
-    const dbProducts = await db.product.findMany({
-      where: {
-        id: {
-          in: cartProducts.map(
-            (product: Prisma.ProductGetPayload<{}>) => product.id
-          ),
-        },
-      },
-    });
+    const cartData = await createCart(productsPayload);
 
-    const cartTotals = await getCartTotals(
-      cartProducts.map((product: TCartItemPayload) => ({
-        id: product.id,
-        quantity: product.quantity,
-      }))
-    );
-
-    const cart = await db.cart.create({
-      data: {
-        ...cartTotals,
-        totalProducts: cartProducts.length,
-        userId: userId || null,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      },
-    });
-
-    const cartItems = dbProducts.map((dbProduct) => {
-      const quantity = cartProducts.find(
-        (product: TCartItemPayload) => product.id === dbProduct.id
-      ).quantity;
-
-      return {
-        cartId: cart.id,
-        productId: dbProduct.id,
-        title: dbProduct.title,
-        price: dbProduct.price,
-        quantity,
-        total: dbProduct.price * quantity,
-        discountPercentage: dbProduct.discountPercentage,
-        discountedTotal:
-          calculateDiscountedPrice(
-            dbProduct.price,
-            dbProduct.discountPercentage
-          ) * quantity,
-        thumbnail: dbProduct.thumbnail,
-      };
-    });
-
-    await db.cartItem.createMany({ data: cartItems });
-
-    const cartData = await db.cart.findUnique({
-      where: { id: cart.id },
-      include: {
-        cartItems: true,
-      },
-    });
+    await createCartItems(productsPayload);
 
     if (!cartData) {
       return notFound();
     }
-
-    setCartCookie(cart.id, cartData.secret);
 
     return NextResponse.json({ data: cartData, meta: {} }, { status: 200 });
   } catch (error) {

@@ -1,4 +1,4 @@
-import db from "@/utils/db";
+import db from "@/db/db";
 import { getCookie } from "@/utils/actions";
 import { has } from "lodash";
 

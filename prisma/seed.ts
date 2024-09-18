@@ -1,4 +1,4 @@
-import db, { Role } from "@/utils/db";
+import db, { Role } from "@/db/db";
 
 const upsertUserData = async () => {
   await db.user.upsert({

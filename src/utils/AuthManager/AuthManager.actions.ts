@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { createHash } from "crypto";
 
 import { lucia } from "@/utils/AuthManager/auth";
-import db from "@/utils/db";
+import db from "@/db/db";
 import { storeUserData } from "@/utils/AuthManager/AuthManager.queries";
 
 type LoginRequestErrors = {};

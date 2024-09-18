@@ -1,7 +1,7 @@
 import currency from "currency.js";
 import { Prisma } from "@prisma/client";
 import { TCartData, TCartItemPayload } from "@/utils/CartManager/types";
-import db from "@/utils/db";
+import db from "@/db/db";
 
 export function calculateDiscountedPrice(
   price: number,
@@ -24,6 +24,7 @@ export const getCartTotal = (products: Prisma.CartItemGetPayload<{}>[]) => {
 };
 
 export const getCartTotals = async (cartProducts: TCartItemPayload[]) => {
+  console.log("cartProducts, ", cartProducts);
   const dbProducts = await db.product.findMany({
     where: {
       id: {
@@ -31,6 +32,8 @@ export const getCartTotals = async (cartProducts: TCartItemPayload[]) => {
       },
     },
   });
+
+  console.log("dbProducts, ", dbProducts);
 
   const total = cartProducts.reduce((acc, product) => {
     const price = dbProducts.find(
@@ -60,4 +63,32 @@ export const getCartTotals = async (cartProducts: TCartItemPayload[]) => {
   }, 0);
 
   return { total, discountedTotal, totalQuantity };
+};
+
+export const insertCartItemPayload = ({
+  items,
+  dbProduct,
+  cartId,
+}: {
+  items: TCartItemPayload[];
+  dbProduct: Prisma.ProductGetPayload<{}>;
+  cartId: number;
+}) => {
+  const quantity =
+    items.find((product: TCartItemPayload) => product.id === dbProduct.id)
+      ?.quantity ?? 1;
+
+  return {
+    cartId,
+    productId: dbProduct.id,
+    title: dbProduct.title,
+    price: dbProduct.price,
+    quantity,
+    total: dbProduct.price * quantity,
+    discountPercentage: dbProduct.discountPercentage,
+    discountedTotal:
+      calculateDiscountedPrice(dbProduct.price, dbProduct.discountPercentage) *
+      quantity,
+    thumbnail: dbProduct.thumbnail,
+  };
 };

@@ -3,7 +3,7 @@ import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { cache } from "react";
 import { cookies } from "next/headers";
 
-import db from "@/utils/db";
+import db from "@/db/db";
 
 const adapter = new PrismaAdapter(db.session, db.user);
 
