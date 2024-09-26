@@ -16,7 +16,7 @@ model Cart {
   discountedTotal Int
   totalProducts   Int
   totalQuantity   Int
-  hashKey         String
+  secret          String     @default(uuid())
   cartItems       CartItem[]
   status          String     @default("active")
   createdAt       DateTime   @default(now())
@@ -25,7 +25,7 @@ model Cart {
 }
 
 model CartItem {
-  id                 Int      @id @default(autoincrement())
+  id                 Int     @id @default(autoincrement())
   cartId             Int
   productId          Int
   title              String
@@ -35,13 +35,14 @@ model CartItem {
   discountPercentage Int?
   discountedTotal    Int?
   thumbnail          String
-  cart               Cart     @relation(fields: [cartId], references: [id])
+  cart               Cart    @relation(fields: [cartId], references: [id])
+  product            Product @relation(fields: [productId], references: [id])
 
   @@unique([cartId, productId])
 }
 
 model Product {
-  id                   Int       @id @default(autoincrement())
+  id                   Int        @id @default(autoincrement())
   title                String
   description          String
   category             String
@@ -52,7 +53,7 @@ model Product {
   brand                String
   sku                  String
   weight               Int
-  dimensions           Dimension @relation(fields: [dimensionId], references: [id])
+  dimensions           Dimension  @relation(fields: [dimensionId], references: [id])
   dimensionId          Int
   warrantyInformation  String
   shippingInformation  String
@@ -60,11 +61,12 @@ model Product {
   returnPolicy         String
   minimumOrderQuantity Int
   reviews              Review[]
-  meta                 Meta      @relation(fields: [metaId], references: [id])
+  meta                 Meta       @relation(fields: [metaId], references: [id])
   metaId               Int
-  tags                 Tag[]     @relation("ProductTags")
+  tags                 Tag[]      @relation("ProductTags")
   thumbnail            String
   images               Image[] // Relation with Image model
+  CartItem             CartItem[]
 }
 
 model Tag {

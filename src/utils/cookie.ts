@@ -15,3 +15,11 @@ export const getCookie = async (key: string) => {
 export const deleteCookie = async (name: string) => {
   cookies().delete(name);
 };
+
+export const setCookie = (key: string, payload: { [key: string]: string }) => {
+  const responseCookies = cookies();
+  return responseCookies.set(key, JSON.stringify(payload), {
+    httpOnly: true,
+    path: "/",
+  });
+};

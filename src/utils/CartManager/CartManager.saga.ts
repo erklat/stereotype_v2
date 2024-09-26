@@ -6,7 +6,7 @@ import { localRestClient } from "@/api/restClient";
 
 import { actions as cartActions } from "@/utils/CartManager/CartManager.reducer";
 // import { notify } from "@/utils/NotificationManager/NotificationManager";
-import { deleteCookie, getCookie } from "@/utils/actions";
+import { deleteCookie, getCookie } from "@/utils/cookie";
 import { getCartData } from "@/utils/CartManager/CartManager.selectors";
 
 /**

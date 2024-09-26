@@ -1,11 +1,12 @@
 import { NextResponse, NextRequest } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import {
-  parseCartDataToResponse,
   calculateDiscountedPrice,
+  getCartTotals,
 } from "@/utils/CartManager/utils";
-
-const prisma = new PrismaClient();
+import db from "@/db/db";
+import { getCookieValue, getCookie } from "@/utils/cookie";
+import { Prisma } from "@prisma/client";
+import { TCartItemPayload } from "@/utils/CartManager/types";
 
 export async function PATCH(
   req: NextRequest,
@@ -13,17 +14,23 @@ export async function PATCH(
 ): Promise<NextResponse> {
   try {
     const payload = await req.json();
-    const { id: cartId, productId } = params;
-    const { hashKey, quantity } = payload;
+    const { secret } = await getCookie("cart_data");
 
-    const existingCart = await prisma.cart.findUnique({
+    const { id: cartId, productId } = params;
+    const { quantity } = payload;
+
+    if (!secret) {
+      return NextResponse.json(
+        { error: "Missing cart secret." },
+        { status: 403 }
+      );
+    }
+
+    const existingCart = await db.cart.findUnique({
       where: {
         id: Number(cartId),
-        hashKey,
+        secret,
         status: "active",
-        expiresAt: {
-          gt: new Date(),
-        },
       },
       include: {
         cartItems: true,
@@ -38,7 +45,8 @@ export async function PATCH(
     }
 
     const existingCartItem = existingCart.cartItems.find(
-      (item) => item.productId === Number(productId)
+      (item: Prisma.CartItemGetPayload<{}>) =>
+        item.productId === Number(productId)
     );
 
     if (!existingCartItem) {
@@ -48,63 +56,121 @@ export async function PATCH(
       );
     }
 
-    if (quantity === 0) {
-      await prisma.cartItem.delete({
-        where: {
-          cartId_productId: {
-            cartId: Number(cartId),
-            productId: Number(productId),
-          },
+    await db.cartItem.update({
+      where: {
+        cartId_productId: {
+          cartId: Number(cartId),
+          productId: Number(productId),
         },
-      });
-    } else {
-      await prisma.cartItem.update({
-        where: {
-          cartId_productId: {
-            cartId: Number(cartId),
-            productId: Number(productId),
-          },
-        },
-        data: {
-          quantity,
-          total: Number(existingCartItem.price) * quantity,
-          discountedTotal:
-            calculateDiscountedPrice(
-              Number(existingCartItem.price),
-              Number(existingCartItem?.discountPercentage)
-            ) * quantity,
-        },
-      });
-    }
+      },
+      data: {
+        quantity,
+        total: existingCartItem.price * quantity,
+        discountedTotal:
+          calculateDiscountedPrice(
+            existingCartItem.price,
+            existingCartItem.discountPercentage
+          ) * quantity,
+      },
+    });
 
-    await prisma.cart.update({
+    const cartItems = await db.cartItem.findMany({
+      where: {
+        cartId: Number(cartId),
+      },
+    });
+
+    console.log(cartItems);
+
+    const cartTotals = await getCartTotals(
+      cartItems.map((item) => ({ id: item.productId, quantity: item.quantity }))
+    );
+
+    const updatedCart = await db.cart.update({
       where: {
         id: existingCart.id,
       },
       data: {
+        ...cartTotals,
         updatedAt: new Date(Date.now()),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
-    });
-
-    // Fetch and return the updated cart data
-    const updatedCart = await prisma.cart.findUnique({
-      where: { id: existingCart.id },
       include: {
-        cartItems: true,
+        cartItems: {
+          include: { product: true },
+        },
       },
     });
 
-    const response = parseCartDataToResponse(updatedCart);
-
-    return NextResponse.json({ data: response });
+    return NextResponse.json({ data: updatedCart, meta: {} }, { status: 200 });
   } catch (error) {
-    console.error("Error updating cart item quantity:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   } finally {
-    await prisma.$disconnect(); // Disconnect Prisma client
+    await db.$disconnect();
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string; productId: string } }
+): Promise<NextResponse> {
+  try {
+    const payload = await req.json();
+    const secret = await getCookieValue(req.headers.get("cookie"), "secret");
+
+    const { id: cartId, productId } = params;
+
+    if (!secret) {
+      return NextResponse.json({ data: {}, meta: {} }, { status: 403 });
+    }
+
+    await db.cartItem.delete({
+      where: {
+        cartId_productId: {
+          cartId: Number(cartId),
+          productId: Number(productId),
+        },
+      },
+    });
+
+    const cartItems = await db.cartItem.findMany({
+      where: {
+        cartId: Number(cartId),
+      },
+    });
+
+    const cartTotals = await getCartTotals(
+      cartItems.map((item) => ({ id: item.id, quantity: item.quantity }))
+    );
+
+    const cartData = await db.cart.update({
+      where: {
+        id: Number(cartId),
+      },
+      data: {
+        ...cartTotals,
+        updatedAt: new Date(Date.now()),
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      },
+      include: {
+        cartItems: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json({ data: cartData, meta: {} }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    );
+  } finally {
+    await db.$disconnect();
   }
 }

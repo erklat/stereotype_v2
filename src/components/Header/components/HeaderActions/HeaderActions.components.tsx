@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect } from "react";
 
 import { signOut } from "next-auth/react";
 import { useAppSelector } from "@/state-management/hooks";
@@ -31,6 +32,10 @@ const HeaderActions = () => {
   const { mutate: logoutUser } = useUserLogout();
 
   console.log("header: ", userData);
+
+  useEffect(() => {
+    if (userData) console.log("user logged");
+  }, [userData]);
 
   return (
     <div className="flex gap-4">
